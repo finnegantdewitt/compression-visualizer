@@ -1,0 +1,5 @@
+{
+  // words for finn's spell checker to ignore (highly recommend adding the extension)
+  // https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker
+  "cSpell.words": ["NGGYU"]
+}
