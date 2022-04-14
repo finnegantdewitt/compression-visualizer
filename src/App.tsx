@@ -1,67 +1,69 @@
 import React from "react";
 import "./App.css";
+import Never_Gonna_Lyrics from "./text/Never_Gonna";
+
+interface Char {
+  char: string,
+  count: number,
+}
+
+type CharFreqTableProps = {
+  charArray: Array<Char>,
+}
+
+const CharFreqTable = ({ charArray }: CharFreqTableProps) => {
+  return(
+    <table style={{fontSize: "16px"}}>
+        {charArray.map((ch, index) => {
+          let displayChar = ch.char;
+          if(displayChar === "\n") {
+            displayChar = "\\n";
+          }
+          else if(displayChar === " ") {
+            displayChar = "[ ]"
+          }
+          return(
+            <tr>
+            <td>{index}</td>
+            <td>{displayChar}</td>
+            <td>{ch.count}</td>
+            </tr>
+          )
+        })}
+    </table>
+  );
+}
 
 function App() {
-  const NGGYU_lyrics = `We're no strangers to love
-  You know the rules and so do I
-  A full commitment's what I'm thinking of
-  You wouldn't get this from any other guy
-  I just wanna tell you how I'm feeling
-  Gotta make you understand
-  Never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye
-  Never gonna tell a lie and hurt you
-  We've known each other for so long
-  Your heart's been aching but you're too shy to say it
-  Inside we both know what's been going on
-  We know the game and we're gonna play it
-  And if you ask me how I'm feeling
-  Don't tell me you're too blind to see
-  Never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye
-  Never gonna tell a lie and hurt you
-  Never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye
-  Never gonna tell a lie and hurt you
-  Never gonna give, never gonna give
-  (Give you up)
-  We've known each other for so long
-  Your heart's been aching but you're too shy to say it
-  Inside we both know what's been going on
-  We know the game and we're gonna play it
-  I just wanna tell you how I'm feeling
-  Gotta make you understand
-  Never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye
-  Never gonna tell a lie and hurt you
-  Never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye
-  Never gonna tell a lie and hurt you
-  Never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye`;
+  // count the freqs of chars with a hashmaps
+  const charFreqs = new Map<string, number>();
+  for(let i = 0; i < Never_Gonna_Lyrics.length; i++) {
+    let letter = Never_Gonna_Lyrics[i];
+    let letterFreq = charFreqs.get(letter);
+    if (letterFreq === undefined) {
+      letterFreq = 0;
+    }
+    letterFreq += 1;
+    charFreqs.set(letter, letterFreq);
+  }
+
+  // sort them in an array
+  const charArray = new Array<Char>();
+  charFreqs.forEach((value, key) => {
+    let ch: Char = { 
+      char: key, 
+      count: value 
+    };
+    charArray.push(ch);
+  });
+  charArray.sort((a, b) => {return b.count - a.count});
+
 
   return (
     <div className="App">
       <header className="App-header">
-        <pre>{NGGYU_lyrics}</pre>
+        <pre>{Never_Gonna_Lyrics}</pre>
+        <CharFreqTable charArray={charArray} />
       </header>
     </div>
   );
