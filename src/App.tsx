@@ -1,5 +1,9 @@
 import React from "react";
+import Splitter from '@devbookhq/splitter';
 import "./App.css";
+import TextPanel from "./components/TextPanel";
+import HexPanel from "./components/HexPanel";
+import HoverStyleBodge from "./components/HoverStyleBodge";
 
 function App() {
   const NGGYU_lyrics = `We're no strangers to love
@@ -60,9 +64,11 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <pre>{NGGYU_lyrics}</pre>
-      </header>
+      <HoverStyleBodge></HoverStyleBodge>
+      <Splitter>
+        <TextPanel text={NGGYU_lyrics}></TextPanel>
+        <HexPanel text={NGGYU_lyrics}></HexPanel>
+      </Splitter>
     </div>
   );
 }
