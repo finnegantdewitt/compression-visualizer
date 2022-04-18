@@ -15,12 +15,14 @@ class TreeNode {
   descendants: Array<TreeNode>;
   isBranch: boolean;
   parent?: TreeNode; // if undefined, root
+  count: number; // Frequency of node
 
-  constructor(value: Node, isBranch: boolean) {
+  constructor(value: Node, isBranch: boolean, count: number) {
     this.value = value;
     this.descendants = [];
     this.isBranch = isBranch;
     this.parent = undefined;
+    this.count = count;
   }
 
   get left() {
@@ -75,6 +77,33 @@ const CharFreqTable = ({ charArray }: CharFreqTableProps) => {
   );
 };
 
+// Added to print out the nodeArray
+type NodeArrayTableProps = {
+  nodeArray: Array<TreeNode>;
+};
+
+const NodeArrayTable = ({ nodeArray }: NodeArrayTableProps) => {
+  return (
+    <table style={{ fontSize: "16px" }}>
+      {nodeArray.map((treenode, index) => {
+        let displayChar = treenode.value.char;
+        if (displayChar === "\n") {
+          displayChar = "\\n";
+        }
+        return (
+          <tr>
+            <td>{index}</td>
+            <td>{displayChar}</td>
+            <td>{treenode.count}</td>
+          </tr>
+        );
+      })}
+    </table>
+  );
+};
+
+// const 
+
 function App() {
   // count the freqs of chars with a hashmaps
   const charFreqs = new Map<string, number>();
@@ -101,10 +130,32 @@ function App() {
     return a.count - b.count; // ascending order
   });
 
-  // make the tree
-  // const branchNode: Node = { char: "*", bits: "*" };
-  // let root = new TreeNode(branchNode, true);
-  // charArray.forEach(ch => {});
+  // make an array of nodes
+  const nodeArray = new Array<TreeNode>();
+  const branchNode: Node = { char: "*", bits: "*" };
+  let root = new TreeNode(branchNode, true, 0);
+  charArray.forEach(ch => {
+    // Create new treenode with count and char
+    let tempNode: Node = { char: ch.char, bits: ""};
+    let node = new TreeNode(tempNode, false, ch.count);
+    // node.left = root;
+    // node.right = root;
+    // append it to the nodeArray 
+    nodeArray.push(node);
+  });
+
+  // build a tree from the nodes
+  while(nodeArray.length > 1){ // I think this does it but I don't have a good way to display it
+    let tempCount = nodeArray[0].count + nodeArray[1].count;
+    let temp = new TreeNode(branchNode, true, tempCount);
+    temp.left = nodeArray[0];
+    temp.right = nodeArray[1];
+    nodeArray.splice(0,2); // Remove first 2 nodes from array
+    let index = nodeArray.findIndex( (element) => {
+      return element.count >= tempCount;
+    })
+    nodeArray.splice(index, 0, temp); // Add temp node to start of array
+  }
 
   return (
     <div className="App">
@@ -121,6 +172,9 @@ function App() {
           </div>
           <div>
             <CharFreqTable charArray={charArray} />
+          </div>
+          <div>
+            <NodeArrayTable nodeArray={nodeArray} />
           </div>
         </div>
       </header>
