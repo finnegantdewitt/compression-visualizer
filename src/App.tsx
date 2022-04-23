@@ -1,6 +1,7 @@
-import React from "react";
-import "./App.css";
-import Never_Gonna_Lyrics from "./text/Never_Gonna";
+import React from 'react';
+import Tree from './components/Tree';
+import './App.css';
+import Never_Gonna_Lyrics from './text/Never_Gonna';
 
 const LEFT = 0;
 const RIGHT = 1;
@@ -59,11 +60,11 @@ type CharFreqTableProps = {
 
 const CharFreqTable = ({ charArray }: CharFreqTableProps) => {
   return (
-    <table style={{ fontSize: "16px" }}>
+    <table style={{ fontSize: '16px' }}>
       {charArray.map((ch, index) => {
         let displayChar = ch.char;
-        if (displayChar === "\n") {
-          displayChar = "\\n";
+        if (displayChar === '\n') {
+          displayChar = '\\n';
         }
         return (
           <tr>
@@ -84,11 +85,11 @@ type NodeArrayTableProps = {
 
 const NodeArrayTable = ({ nodeArray }: NodeArrayTableProps) => {
   return (
-    <table style={{ fontSize: "16px" }}>
+    <table style={{ fontSize: '16px' }}>
       {nodeArray.map((treenode, index) => {
         let displayChar = treenode.value.char;
-        if (displayChar === "\n") {
-          displayChar = "\\n";
+        if (displayChar === '\n') {
+          displayChar = '\\n';
         }
         return (
           <tr>
@@ -102,7 +103,7 @@ const NodeArrayTable = ({ nodeArray }: NodeArrayTableProps) => {
   );
 };
 
-// const 
+// const
 
 function App() {
   // count the freqs of chars with a hashmaps
@@ -122,7 +123,7 @@ function App() {
   charFreqs.forEach((value, key) => {
     let ch: Char = {
       char: key,
-      count: value,
+      count: value
     };
     charArray.push(ch);
   });
@@ -132,28 +133,29 @@ function App() {
 
   // make an array of nodes
   const nodeArray = new Array<TreeNode>();
-  const branchNode: Node = { char: "*", bits: "*" };
+  const branchNode: Node = { char: '*', bits: '*' };
   let root = new TreeNode(branchNode, true, 0);
-  charArray.forEach(ch => {
+  charArray.forEach((ch) => {
     // Create new treenode with count and char
-    let tempNode: Node = { char: ch.char, bits: ""};
+    let tempNode: Node = { char: ch.char, bits: '' };
     let node = new TreeNode(tempNode, false, ch.count);
     // node.left = root;
     // node.right = root;
-    // append it to the nodeArray 
+    // append it to the nodeArray
     nodeArray.push(node);
   });
 
   // build a tree from the nodes
-  while(nodeArray.length > 1){ // I think this does it but I don't have a good way to display it
+  while (nodeArray.length > 1) {
+    // I think this does it but I don't have a good way to display it
     let tempCount = nodeArray[0].count + nodeArray[1].count;
     let temp = new TreeNode(branchNode, true, tempCount);
     temp.left = nodeArray[0];
     temp.right = nodeArray[1];
-    nodeArray.splice(0,2); // Remove first 2 nodes from array
-    let index = nodeArray.findIndex( (element) => {
+    nodeArray.splice(0, 2); // Remove first 2 nodes from array
+    let index = nodeArray.findIndex((element) => {
       return element.count >= tempCount;
-    })
+    });
     nodeArray.splice(index, 0, temp); // Add temp node to start of array
   }
 
@@ -162,9 +164,9 @@ function App() {
       <header className="App-header">
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            justifyItems: "center",
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            justifyItems: 'center'
           }}
         >
           <div>
@@ -175,6 +177,7 @@ function App() {
           </div>
           <div>
             <NodeArrayTable nodeArray={nodeArray} />
+            <Tree />
           </div>
         </div>
       </header>
