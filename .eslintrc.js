@@ -149,6 +149,12 @@ module.exports = {
             types: ['function'],
             format: ['camelCase', 'PascalCase'],
           },
+          { // allow unused variables to start with underscores
+            selector: ['variableLike'],
+            modifiers: ['unused'],
+            format: ['camelCase'],
+            leadingUnderscore: 'allow',
+          },
           { // allow functions to be PascalCase (for react components)
             selector: ['function'],
             format: ['camelCase', 'PascalCase'],
