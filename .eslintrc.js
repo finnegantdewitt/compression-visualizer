@@ -5,18 +5,9 @@ const tsJsSharedConfigs = {
   'no-unused-vars': ['error', {
     argsIgnorePattern: '^_',
   }],
-  // indent with 2 spaces
-  'comma-dangle': ['error', 'always-multiline'],
   'default-param-last': 'error',
   'dot-notation': 'error',
   'no-dupe-class-members': 'error',
-  'no-extra-parens': ['error', 'all', {
-    returnAssign: false,
-    nestedBinaryExpressions: false,
-    enforceForNewInMemberExpressions: false,
-  }],
-  // always require semicolons
-  'semi': ['error', 'always'],
   'no-loss-of-precision': 'error',
 };
 
@@ -28,6 +19,8 @@ module.exports = {
       files: ['**/*.js'],
       extends: [
         'eslint:recommended',
+        // disable all eslint rules that might conflict with prettier
+        'prettier',
       ],
       rules: {
         ...tsJsSharedConfigs,
@@ -45,7 +38,11 @@ module.exports = {
     // config for both js and ts/tsx files (i.e., base eslint rules that deviate from eslint:recommended)
     {
       files: ['**/*.js', '**/*.ts', '**/*.tsx'],
+      plugins: [
+        'prettier',
+      ],
       rules: {
+        "prettier/prettier": "error",
         'no-await-in-loop': 'error',
         'no-promise-executor-return': 'error',
         'no-template-curly-in-string': 'error',
@@ -82,6 +79,8 @@ module.exports = {
         'react-app/jest',
         // enable more accessibility checks than react-app enables by default
         'plugin:jsx-a11y/recommended',
+        // disable all eslint rules that might conflict with prettier
+        'prettier',
       ],
       // rules documentation
       //   https://eslint.org/docs/rules/
