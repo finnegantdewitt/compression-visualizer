@@ -1,8 +1,7 @@
-import React from "react";
-import "./App.css";
-import LyricSplit from "./components/LyricSplit";
-import Never_Gonna_Lyrics from "./text/Never_Gonna";
-
+import React from 'react';
+import './App.css';
+import LyricSplit from './components/LyricSplit';
+import Never_Gonna_Lyrics from './text/Never_Gonna';
 
 function App() {
   return (

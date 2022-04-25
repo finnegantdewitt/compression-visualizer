@@ -1,11 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment } from 'react';
 import Splitter from '@devbookhq/splitter';
-import HoverStyleBodge from "./HoverStyleBodge";
-import TextPanel from "./TextPanel";
-import HexPanel from "./HexPanel";
+import HoverStyleBodge from './HoverStyleBodge';
+import TextPanel from './TextPanel';
+import HexPanel from './HexPanel';
 
-
-const LyricSplit = ({lyrics}: {readonly lyrics: string}) => {
+const LyricSplit = ({ lyrics }: { readonly lyrics: string }) => {
   return (
     <Fragment>
       <HoverStyleBodge></HoverStyleBodge>

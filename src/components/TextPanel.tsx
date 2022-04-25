@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { to_domstr_representation } from "./HoverStyleBodge";
+import React, { Fragment } from 'react';
+import { to_domstr_representation } from './HoverStyleBodge';
 
 const display_chars: Record<string, string> = {
   // https://www.compart.com/en/unicode/block/U+2400
@@ -40,22 +40,30 @@ const display_chars: Record<string, string> = {
   '\u007F': '\u2421',
 
   // ====
-  ' ': '•',
+  ' ': '•'
 };
-const TextPanelEntry = ({ char, idx }: { char: string; idx: number; }) => {
+const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
   return (
     <Fragment>
       <div data-char={to_domstr_representation(char)} data-stridx={idx}>
         {display_chars[char] ?? char}
       </div>
-      {(char === '\n') ? <br></br> : <Fragment></Fragment> /* TODO prob a cleaner way to write this */}
+      {
+        char === '\n' ? (
+          <br></br>
+        ) : (
+          <Fragment></Fragment>
+        ) /* TODO prob a cleaner way to write this */
+      }
     </Fragment>
   );
 };
-const TextPanel = ({ text }: { text: string; }) => {
+const TextPanel = ({ text }: { text: string }) => {
   return (
-    <div className='TextPanel'>
-      {[...text].map((char, idx) => <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>)}
+    <div className="TextPanel">
+      {[...text].map((char, idx) => (
+        <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
+      ))}
     </div>
   );
 };
