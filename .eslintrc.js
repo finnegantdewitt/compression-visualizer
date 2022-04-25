@@ -6,37 +6,14 @@ const tsJsSharedConfigs = {
     argsIgnorePattern: '^_',
   }],
   // indent with 2 spaces
-  'indent': ['error', 2],
-  'brace-style': ['error', 'stroustrup'],
   'comma-dangle': ['error', 'always-multiline'],
-  'comma-spacing': ['error', {before: false, after: true}],
   'default-param-last': 'error',
   'dot-notation': 'error',
-  'func-call-spacing': ['error', 'never'],
-  'keyword-spacing': ['error', {
-    before: true, after: true,
-    overrides: {
-      if: { after: false },
-      for: { after: false },
-      while: { after: false },
-    },
-  }],
   'no-dupe-class-members': 'error',
   'no-extra-parens': ['error', 'all', {
     returnAssign: false,
     nestedBinaryExpressions: false,
     enforceForNewInMemberExpressions: false,
-  }],
-  // single quotes by default, double quotes when text includes single quotes, backticks only when doing string interpolation or when string is multiline
-  'quotes': ['error', 'single', {
-    avoidEscape: true,
-    allowTemplateLiterals: false,
-  }],
-  'space-infix-ops': 'error',
-  'space-before-function-paren': ['error', {
-    named: 'never',
-    anonymous: 'always',
-    asyncArrow: 'always',
   }],
   // always require semicolons
   'semi': ['error', 'always'],
@@ -78,12 +55,9 @@ module.exports = {
         'no-constant-condition': ['error', { checkLoops: false }],
         'arrow-body-style': ['error', 'as-needed'],
         'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
-        'arrow-spacing': ['error', {before: true, after: true}],
         'no-useless-computed-key': ['error', { enforceForClassMembers: true }],
         'no-useless-rename': 'error',
         'object-shorthand': ['error', 'methods'],
-        'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 1, maxBOF: 0 }],
-        'eol-last': 'error',
         'prefer-numeric-literals': 'error',
         'no-var': 'error',
       },
@@ -191,16 +165,6 @@ module.exports = {
           ignoreStringArrays: true,
         }],
         '@typescript-eslint/switch-exhaustiveness-check': 'error',
-        '@typescript-eslint/type-annotation-spacing': ['error', {
-          before: false,
-          after: true,
-          overrides: {
-            arrow: {
-              before: true,
-              after: true,
-            },
-          },
-        }],
         '@typescript-eslint/unified-signatures': 'error',
         // require returned promises to be awaited, since it gives better stack traces for error handling
         '@typescript-eslint/return-await': ['error', 'always'],
