@@ -1,9 +1,6 @@
 import React from "react";
-import Splitter from '@devbookhq/splitter';
 import "./App.css";
-import TextPanel from "./components/TextPanel";
-import HexPanel from "./components/HexPanel";
-import HoverStyleBodge from "./components/HoverStyleBodge";
+import LyricSplit from "./components/LyricSplit";
 
 function App() {
   const NGGYU_lyrics = `We're no strangers to love
@@ -64,11 +61,7 @@ function App() {
 
   return (
     <div className="App">
-      <HoverStyleBodge></HoverStyleBodge>
-      <Splitter>
-        <TextPanel text={NGGYU_lyrics}></TextPanel>
-        <HexPanel text={NGGYU_lyrics}></HexPanel>
-      </Splitter>
+      <LyricSplit lyrics={NGGYU_lyrics} />
     </div>
   );
 }
