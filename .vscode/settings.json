@@ -4,5 +4,6 @@
   "cSpell.words": [
     "Freqs",
     "NGGYU"
-  ]
+  ],
+  "eslint.format.enable": true,
 }
