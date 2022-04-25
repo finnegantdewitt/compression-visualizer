@@ -1,5 +1,7 @@
 .App {
-  text-align: center;
+  /* text-align: center; */
+  width: 100vw;
+  height: 100vh;
 }
 
 .App-logo {
@@ -35,4 +37,34 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.TextPanel {
+  overflow-wrap: break-word;
+  font-family: monospace;
+  cursor: default;
+}
+.TextPanel > div {
+  display: inline;
+}
+
+.TextPanel,
+.HexPanel {
+  height: 100%;
+  overflow-y: scroll;
+}
+.TextPanel > div,
+.HexPanel > div {
+  background-color: var(--hovered-bg, transparent);
+}
+
+.HexPanel {
+  font-family: monospace;
+  cursor: default;
+  display: flex;
+  flex-wrap: wrap;
+}
+.HexPanel > div {
+  padding-left: 0.5ch;
+  padding-right: 0.5ch;
 }
