@@ -12,7 +12,7 @@ function App() {
       <header className="App-header">
         <LyricSplit lyrics={Simple} />
         <GetFile setFileText={setFileText} />
-        <div>{fileText}</div>
+        <div>{fileText?.toString()}</div>
       </header>
     </div>
   );
