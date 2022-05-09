@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
 
 const display_chars: Record<string, string> = {
@@ -58,10 +59,10 @@ const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
     </Fragment>
   );
 };
-const TextPanel = ({ text }: { text: string }) => {
+const TextPanel: React.FC<CommonArgs> = ({ fileText }) => {
   return (
     <div className="TextPanel">
-      {[...text].map((char, idx) => (
+      {[...fileText].map((char, idx) => (
         <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
       ))}
     </div>

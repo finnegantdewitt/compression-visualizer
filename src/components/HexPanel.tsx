@@ -1,4 +1,5 @@
 import React from 'react';
+import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
 
 const HexPanelEntry = ({
@@ -16,11 +17,11 @@ const HexPanelEntry = ({
     </div>
   );
 };
-const HexPanel = ({ text }: { text: string }) => {
+const HexPanel: React.FC<CommonArgs> = ({ fileText }) => {
   const encoder = new TextEncoder();
   return (
     <div className="HexPanel">
-      {[...text].flatMap((char, idx) =>
+      {[...fileText].flatMap((char, idx) =>
         [...encoder.encode(char)].map((byte) => (
           <HexPanelEntry
             byte={byte}
