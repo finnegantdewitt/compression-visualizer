@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
 const LEFT = 0;
@@ -51,71 +51,6 @@ interface Char {
   char: string;
   count: number;
 }
-
-type CharFreqTableProps = {
-  charArray: Array<Char>;
-};
-
-const CharFreqTable = ({ charArray }: CharFreqTableProps) => {
-  return (
-    <table style={{ fontSize: '16px' }}>
-      {charArray.map((ch, index) => {
-        let displayChar = ch.char;
-        if (displayChar === '\n') {
-          displayChar = '\\n';
-        }
-        return (
-          <tr>
-            <td>{index}</td>
-            <td>{displayChar}</td>
-            <td>{ch.count}</td>
-          </tr>
-        );
-      })}
-    </table>
-  );
-};
-
-// Added to print out the nodeArray
-type NodeArrayTableProps = {
-  nodeArray: Array<TreeNode>;
-};
-
-const NodeArrayTable = ({ nodeArray }: NodeArrayTableProps) => {
-  return (
-    <table style={{ fontSize: '16px' }}>
-      {nodeArray.map((treenode, index) => {
-        let displayChar = treenode.value.char;
-        if (displayChar === '\n') {
-          displayChar = '\\n';
-        }
-        return (
-          <tr>
-            <td>{index}</td>
-            <td>{displayChar}</td>
-            <td>{treenode.count}</td>
-          </tr>
-        );
-      })}
-    </table>
-  );
-};
-
-// function nodeToJson(nodeArray: Array<TreeNode>) {
-//   let nodes = new Array<{id: number, name: string}>();
-//   let links = new Array<{source: number, target: number}>();
-//   nodeArray.forEach((node, index) => {
-//     let id = index;
-//     let name = node.value.char;
-//     nodes.push({id: id, name: name});
-//     let source = index;
-//     node.descendants.forEach((node) => { // for each descendant create a new link
-//       let target = nodeArray.findIndex((element) => {return node === element});
-//       links.push({source: source, target: target});
-//     });
-//   });
-//   return {nodes: nodes, links: links}
-// }
 
 function createTree(text: string) {
   // count the freqs of chars with a hashmaps
@@ -173,11 +108,14 @@ function createTree(text: string) {
   return nodeArray[0];
 }
 
+interface TreeProps {
+  treeData: TreeNode;
+}
 
-function displayTree(treeData: any) {
+function Tree(props: TreeProps) {
   // set the dimensions and margins of the diagram
-  const margin = {top: 20, right: 90, bottom: 30, left: 90};
-  const width  = 750 - margin.left - margin.right;
+  const margin = {top: 0, right: 0, bottom: 0, left: 0};
+  const width  = 600 - margin.left - margin.right;
   const height = 750 - margin.top - margin.bottom;
 
   // Declares a tree layout and assigns the size
@@ -185,48 +123,52 @@ function displayTree(treeData: any) {
 
 
   //  assigns the data to a hierarchy using parent-child relationships
-  let nodes: any = d3.hierarchy(treeData, (d:any) => d.descendants);
+  let nodes: any = d3.hierarchy(props.treeData, (d:any) => d.descendants);
 
   // maps the node data to the tree layout
   nodes = treemap(nodes);
 
-  // append the svg object to the body of the page
-  // appends a 'group' element to 'svg'
-  // moves the 'group' element to the top left margin
-  const svg = d3.select("body").append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom),
-        g = svg.append("g")
-          .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
 
-  // adds the links between the nodes
-  const link = g.selectAll(".link")
-                .data( nodes.descendants().slice(1))
-                .enter().append("path")
-                .attr("class", "link")
-                .attr("fill", "none")
-                .style("stroke", "black")
-                .attr("d", (d: any) => {
-                  return "M" + d.x + "," + d.y
-                    + " " + d.parent.x + "," + d.parent.y;
-                  });
+  const ref: any = useRef();
 
-  // adds each node as a group
-  const node = g.selectAll(".node")
-      .data(nodes.descendants())
-      .enter().append("g")
-      .attr("class", (d: any) => "node" + (d.children ? " node--internal" : " node--leaf"))
-      .attr("transform", (d: any) => "translate(" + d.x + "," + d.y + ")");
+  useEffect(() => {
+    // appends a 'group' element to 'svg'
+    // moves the 'group' element to the top left margin
+    const svg = d3.select(ref.current)
+                  .attr("width", width + margin.left + margin.right)
+                  .attr("height", height + margin.top + margin.bottom);
+    const g = svg.append("g")
+                 .attr("transform",
+                       "translate(" + margin.left + "," + margin.top + ")");
+                      
+    
+    // adds the links between the nodes
+    const link = g.selectAll(".link")
+    .data( nodes.descendants().slice(1))
+    .enter().append("path")
+    .attr("class", "link")
+    .attr("fill", "none")
+    .style("stroke", "black")
+    .attr("d", (d: any) => {
+      return "M" + d.x + "," + d.y
+        + " " + d.parent.x + "," + d.parent.y;
+      });
 
-  // adds the circle to the node
-  node.append("circle")
+    // adds each node as a group
+    const node = g.selectAll(".node")
+    .data(nodes.descendants())
+    .enter().append("g")
+    .attr("class", (d: any) => "node" + (d.children ? " node--internal" : " node--leaf"))
+    .attr("transform", (d: any) => "translate(" + d.x + "," + d.y + ")");
+
+    // adds the circle to the node
+    node.append("circle")
     .attr("r", "15")
     .style("stroke", "black")
     .style("fill", "#D3D3D3"); //Light gray
-    
-  // adds the text to the node
-  node.append("text")
+
+    // adds the text to the node
+    node.append("text")
     .attr("dy", ".35em")
     .attr("x", "-0")
     .attr("y", "0")
@@ -241,6 +183,17 @@ function displayTree(treeData: any) {
           return d.data.value.char;
       } 
     });
+  }, [height, margin, nodes, width]);
+
+
+    return (
+      <>
+        <svg
+          ref={ref}
+          viewBox={`0 0 ${height} ${width}`}
+        />
+      </>
+    );
 }
 
-export {displayTree, createTree};
+export {Tree, createTree};

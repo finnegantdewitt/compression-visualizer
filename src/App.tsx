@@ -1,14 +1,13 @@
 import React from 'react';
 import './App.css';
 import Never_Gonna_Lyrics from './text/Never_Gonna';
-import {displayTree, createTree} from './components/Tree'
+import {Tree, createTree} from './components/Tree'
 
 
 
 function App() {
   
   let tree = createTree(Never_Gonna_Lyrics);
-  displayTree(tree);
 
   return (
     <div className="App">
@@ -23,6 +22,7 @@ function App() {
           <div>
             <pre>{Never_Gonna_Lyrics}</pre>
           </div>
+          <Tree treeData={tree} />
         </div>
       </header>
     </div>
