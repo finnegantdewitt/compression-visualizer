@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 // testing file input
 function GetFile({
@@ -24,7 +24,7 @@ function GetFile({
 
   const submitHandler = () => {
     if (localFileText == null) {
-      alert("Please select a .txt file.");
+      alert('Please select a .txt file.');
     } else {
       console.log(localFileText);
       setFileText(localFileText);

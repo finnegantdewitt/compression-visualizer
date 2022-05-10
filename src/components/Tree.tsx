@@ -70,7 +70,7 @@ function createTree(text: string) {
   charFreqs.forEach((value, key) => {
     let ch: Char = {
       char: key,
-      count: value
+      count: value,
     };
     charArray.push(ch);
   });
@@ -114,86 +114,88 @@ interface TreeProps {
 
 function Tree(props: TreeProps) {
   // set the dimensions and margins of the diagram
-  const margin = {top: 0, right: 0, bottom: 0, left: 0};
-  const width  = 600 - margin.left - margin.right;
+  const margin = { top: 0, right: 0, bottom: 0, left: 0 };
+  const width = 600 - margin.left - margin.right;
   const height = 750 - margin.top - margin.bottom;
 
   // Declares a tree layout and assigns the size
   const treemap = d3.tree().size([height, width]);
 
-
   //  assigns the data to a hierarchy using parent-child relationships
-  let nodes: any = d3.hierarchy(props.treeData, (d:any) => d.descendants);
+  let nodes: any = d3.hierarchy(props.treeData, (d: any) => d.descendants);
 
   // maps the node data to the tree layout
   nodes = treemap(nodes);
-
 
   const ref: any = useRef();
 
   useEffect(() => {
     // appends a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
-    const svg = d3.select(ref.current)
-                  .attr("width", width + margin.left + margin.right)
-                  .attr("height", height + margin.top + margin.bottom);
-    const g = svg.append("g")
-                 .attr("transform",
-                       "translate(" + margin.left + "," + margin.top + ")");
-                      
-    
+    const svg = d3
+      .select(ref.current)
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom);
+    const g = svg
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
     // adds the links between the nodes
-    const link = g.selectAll(".link")
-    .data( nodes.descendants().slice(1))
-    .enter().append("path")
-    .attr("class", "link")
-    .attr("fill", "none")
-    .style("stroke", "black")
-    .attr("d", (d: any) => {
-      return "M" + d.x + "," + d.y
-        + " " + d.parent.x + "," + d.parent.y;
+    const link = g
+      .selectAll('.link')
+      .data(nodes.descendants().slice(1))
+      .enter()
+      .append('path')
+      .attr('class', 'link')
+      .attr('fill', 'none')
+      .style('stroke', 'black')
+      .attr('d', (d: any) => {
+        return 'M' + d.x + ',' + d.y + ' ' + d.parent.x + ',' + d.parent.y;
       });
 
     // adds each node as a group
-    const node = g.selectAll(".node")
-    .data(nodes.descendants())
-    .enter().append("g")
-    .attr("class", (d: any) => "node" + (d.children ? " node--internal" : " node--leaf"))
-    .attr("transform", (d: any) => "translate(" + d.x + "," + d.y + ")");
+    const node = g
+      .selectAll('.node')
+      .data(nodes.descendants())
+      .enter()
+      .append('g')
+      .attr(
+        'class',
+        (d: any) => 'node' + (d.children ? ' node--internal' : ' node--leaf'),
+      )
+      .attr('transform', (d: any) => 'translate(' + d.x + ',' + d.y + ')');
 
     // adds the circle to the node
-    node.append("circle")
-    .attr("r", "15")
-    .style("stroke", "black")
-    .style("fill", "#D3D3D3"); //Light gray
+    node
+      .append('circle')
+      .attr('r', '15')
+      .style('stroke', 'black')
+      .style('fill', '#D3D3D3'); //Light gray
 
     // adds the text to the node
-    node.append("text")
-    .attr("dy", ".35em")
-    .attr("x", "-0")
-    .attr("y", "0")
-    .style("text-anchor", "middle")
-    .text((d: any) => {
-      switch (d.data.value.char) {
-        case ' ':
-          return '_';
-        case '\n':
-          return '\\n';
-        default:
-          return d.data.value.char;
-      } 
-    });
+    node
+      .append('text')
+      .attr('dy', '.35em')
+      .attr('x', '-0')
+      .attr('y', '0')
+      .style('text-anchor', 'middle')
+      .text((d: any) => {
+        switch (d.data.value.char) {
+          case ' ':
+            return '_';
+          case '\n':
+            return '\\n';
+          default:
+            return d.data.value.char;
+        }
+      });
   }, [height, margin, nodes, width]);
 
-
-    return (
-      <>
-        <svg
-          ref={ref}
-          viewBox={`0 0 ${height} ${width}`}
-        />
-      </>
-    );
+  return (
+    <>
+      <svg ref={ref} viewBox={`0 0 ${height} ${width}`} />
+    </>
+  );
 }
 
-export {Tree, createTree};
+export { Tree, createTree };

@@ -21,11 +21,11 @@ const HoverStyleBodge = () => {
         setStridx(
           event.target.dataset.stridx === undefined
             ? null
-            : parseInt(event.target.dataset.stridx)
+            : parseInt(event.target.dataset.stridx),
         );
       }
     },
-    rootRef
+    rootRef,
   );
   useEventListener(
     'mouseout',
@@ -36,7 +36,7 @@ const HoverStyleBodge = () => {
         setStridx(null);
       }
     },
-    rootRef
+    rootRef,
   );
   let style = '';
   if (char !== null) style += `[data-char="${char}"] { --hovered-bg: cyan; }`;

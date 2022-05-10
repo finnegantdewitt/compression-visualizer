@@ -4,7 +4,7 @@ import { to_domstr_representation } from './HoverStyleBodge';
 const HexPanelEntry = ({
   byte,
   char,
-  idx
+  idx,
 }: {
   byte: number;
   char: string;
@@ -28,7 +28,7 @@ const HexPanel = ({ text }: { text: string }) => {
             idx={idx}
             key={idx}
           ></HexPanelEntry>
-        ))
+        )),
       )}
     </div>
   );
