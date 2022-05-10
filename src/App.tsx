@@ -8,7 +8,7 @@ import { Tree, createTree } from './components/Tree';
 
 function App() {
   const [fileText, setFileText] = useState<string | ArrayBuffer | null>(null);
-  let tree = createTree('');
+  let tree = createTree(Simple);
   return (
     <div className="App">
       <header className="App-header">
