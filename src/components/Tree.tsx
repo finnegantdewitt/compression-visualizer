@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { CommonArgs } from './common';
+import { HierarchyPointNode } from 'd3';
+import { assert } from '../util';
 
 const LEFT = 0;
 const RIGHT = 1;
@@ -120,15 +122,15 @@ function Tree(props: TreeProps) {
   const height = 750 - margin.top - margin.bottom;
 
   // Declares a tree layout and assigns the size
-  const treemap = d3.tree().size([height, width]);
+  const treemap = d3.tree<TreeNode>().size([height, width]);
 
   //  assigns the data to a hierarchy using parent-child relationships
-  let nodes: any = d3.hierarchy(props.treeData, (d: any) => d.descendants);
+  const nodes_hierarchy: d3.HierarchyNode<TreeNode> = d3.hierarchy(props.treeData, (d) => d.descendants);
 
   // maps the node data to the tree layout
-  nodes = treemap(nodes);
+  const nodes: d3.HierarchyPointNode<TreeNode> = treemap(nodes_hierarchy);
 
-  const ref: any = useRef();
+  const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     // appends a 'group' element to 'svg'
@@ -150,8 +152,9 @@ function Tree(props: TreeProps) {
       .attr('class', 'link')
       .attr('fill', 'none')
       .style('stroke', 'black')
-      .attr('d', (d: any) => {
-        return 'M' + d.x + ',' + d.y + ' ' + d.parent.x + ',' + d.parent.y;
+      .attr('d', (d) => {
+        if(d.parent === null) return ''; // should be unreachable since we do the slice, but just in case
+        else return `M${d.x},${d.y} ${d.parent.x},${d.parent.y}`;
       });
 
     // adds each node as a group
@@ -162,9 +165,9 @@ function Tree(props: TreeProps) {
       .append('g')
       .attr(
         'class',
-        (d: any) => 'node' + (d.children ? ' node--internal' : ' node--leaf'),
+        (d) => 'node' + (d.children ? ' node--internal' : ' node--leaf'),
       )
-      .attr('transform', (d: any) => 'translate(' + d.x + ',' + d.y + ')');
+      .attr('transform', (d) => 'translate(' + d.x + ',' + d.y + ')');
 
     // adds the circle to the node
     node
@@ -180,7 +183,7 @@ function Tree(props: TreeProps) {
       .attr('x', '-0')
       .attr('y', '0')
       .style('text-anchor', 'middle')
-      .text((d: any) => {
+      .text((d) => {
         switch (d.data.value.char) {
           case ' ':
             return '_';
