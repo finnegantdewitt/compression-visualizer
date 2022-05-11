@@ -41,7 +41,7 @@ const display_chars: Record<string, string> = {
   '\u007F': '\u2421',
 
   // ====
-  ' ': '•'
+  ' ': '•',
 };
 const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
   return (
