@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { CommonArgs } from './common';
 
 const LEFT = 0;
 const RIGHT = 1;
@@ -198,4 +199,9 @@ function Tree(props: TreeProps) {
   );
 }
 
-export { Tree, createTree };
+const TreePanel: React.FC<CommonArgs> = ({ fileText }) => {
+  const tree = createTree(fileText);
+  return <Tree treeData={tree} />;
+};
+
+export default TreePanel;

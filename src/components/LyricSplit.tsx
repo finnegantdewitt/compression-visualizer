@@ -5,11 +5,13 @@ import TextPanel from './TextPanel';
 import HexPanel from './HexPanel';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import { CommonArgs } from './common';
+import TreePanel from './Tree';
 
-type PanelType = 'Text' | 'Hex';
+type PanelType = 'Text' | 'Hex' | 'Tree';
 const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
   Text: TextPanel,
   Hex: HexPanel,
+  Tree: TreePanel,
 };
 
 const LyricSplit: React.FC<CommonArgs> = (params) => {
@@ -26,8 +28,12 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
         )}
         initialValue={{
           direction: 'row',
-          first: 'Text',
-          second: 'Hex',
+          first: 'Tree',
+          second: {
+            direction: 'row',
+            first: 'Text',
+            second: 'Hex',
+          }
         }}
       />
     </Fragment>
