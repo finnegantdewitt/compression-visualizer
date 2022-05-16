@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react';
-import HoverStyleBodge from './HoverStyleBodge';
+import React, { Fragment, useState } from 'react';
+import { HSBGlobalListener, HSBStyle } from './HoverStyleBodge';
 import TextPanel from './TextPanel';
 import { HexPanel, BinaryPanel } from './BytesPanel';
-import { Mosaic, MosaicWindow } from 'react-mosaic-component';
+import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import { CommonArgs } from './common';
 import TreePanel from './Tree';
 
@@ -16,9 +16,24 @@ const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
 
 // TODO: should rename `LyricSplit` to something more accurate
 const LyricSplit: React.FC<CommonArgs> = (params) => {
+  const [mosaicValue, setMosaicValue] = useState<MosaicNode<PanelType> | null>({
+    direction: 'row',
+    splitPercentage: 100 / 3,
+    first: 'Text',
+    second: {
+      direction: 'row',
+      first: {
+        direction: 'column',
+        first: 'Hex',
+        second: 'Binary',
+      },
+      second: 'Tree',
+    },
+  });
   return (
     <Fragment>
-      <HoverStyleBodge></HoverStyleBodge>
+      <HSBStyle data={params.hsbData} />
+      <HSBGlobalListener data={params.hsbData} />
       <Mosaic<PanelType>
         className="mosaic-blueprint-theme bp4-dark"
         blueprintNamespace="bp4"
@@ -27,20 +42,8 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
             {React.createElement(paneltypeComponentMap[id], params, null)}
           </MosaicWindow>
         )}
-        initialValue={{
-          direction: 'row',
-          splitPercentage: 100 / 3,
-          first: 'Text',
-          second: {
-            direction: 'row',
-            first: {
-              direction: 'column',
-              first: 'Hex',
-              second: 'Binary',
-            },
-            second: 'Tree',
-          },
-        }}
+        value={mosaicValue}
+        onChange={setMosaicValue}
       />
     </Fragment>
   );

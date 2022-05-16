@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
+import './Tree.css';
 import * as d3 from 'd3';
 import { CommonArgs } from './common';
 import { HierarchyPointNode } from 'd3';
 import { assert } from '../util';
+import { HSBData, hsbMouseOutListener, hsbMouseOverListener, to_domstr_representation } from './HoverStyleBodge';
 
 const LEFT = 0;
 const RIGHT = 1;
@@ -113,6 +115,7 @@ function createTree(text: string) {
 
 interface TreeProps {
   treeData: TreeNode;
+  hsbData: HSBData;
 }
 
 function Tree(props: TreeProps) {
@@ -162,8 +165,6 @@ function Tree(props: TreeProps) {
       .enter()
       .append('path')
       .attr('class', 'link')
-      .attr('fill', 'none')
-      .style('stroke', 'black')
       .attr('d', (d) => {
         if(d.parent === null) return ''; // should be unreachable since we do the slice, but just in case
         else return `M${d.x},${d.y} ${d.parent.x},${d.parent.y}`;
@@ -185,8 +186,7 @@ function Tree(props: TreeProps) {
     node
       .append('circle')
       .attr('r', '15')
-      .style('stroke', 'black')
-      .style('fill', '#D3D3D3'); //Light gray
+      .attr('data-char', (d) => to_domstr_representation(d.data.value.char));
 
     // adds the text to the node
     node
@@ -194,7 +194,6 @@ function Tree(props: TreeProps) {
       .attr('dy', '.35em')
       .attr('x', '-0')
       .attr('y', '0')
-      .style('text-anchor', 'middle')
       .text((d) => {
         switch (d.data.value.char) {
           case ' ':
@@ -209,15 +208,15 @@ function Tree(props: TreeProps) {
 
   return (
     <>
-      <svg ref={ref} viewBox={`0 0 ${height} ${width}`} />
+      <svg className='Tree' ref={ref} onMouseOver={hsbMouseOverListener(props.hsbData)} onMouseOut={hsbMouseOutListener(props.hsbData)} />
     </>
   );
 }
 
-const TreePanel: React.FC<CommonArgs> = ({ fileText }) => {
+const TreePanel: React.FC<CommonArgs> = ({ fileText, hsbData }) => {
   const [tree, setTree] = useState<TreeNode>(() => createTree(fileText));
   useEffect(() => { setTree(createTree(fileText)); }, [fileText]);
-  return <Tree treeData={tree} />;
+  return <Tree treeData={tree} hsbData={hsbData} />;
 };
 
 export default TreePanel;

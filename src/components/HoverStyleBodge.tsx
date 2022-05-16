@@ -7,41 +7,51 @@ import { useEventListener } from 'usehooks-ts';
 export const to_domstr_representation = (s: string): string =>
   [...s].map((c) => c.charCodeAt(0)).join('');
 
-const HoverStyleBodge = () => {
-  const [stridx, setStridx] = useState<null | number>(null);
+export type HSBData = {
+  strIdx: null | number;
+  setStrIdx: React.Dispatch<React.SetStateAction<null | number>>;
+  char: null | string;
+  setChar: React.Dispatch<React.SetStateAction<null | string>>;
+};
+export function useHsbData(): HSBData {
+  const [strIdx, setStrIdx] = useState<null | number>(null);
   const [char, setChar] = useState<null | string>(null);
-  const rootRef = useRef(document.documentElement);
-  // using mouseover rather than mouseenter since former bubbles
-  useEventListener(
-    'mouseover',
-    (event: MouseEvent) => {
-      if (!(event.target instanceof HTMLElement)) return;
-      if ('char' in event.target.dataset || 'stridx' in event.target.dataset) {
-        setChar(event.target.dataset.char ?? null);
-        setStridx(
-          event.target.dataset.stridx === undefined
-            ? null
-            : parseInt(event.target.dataset.stridx),
-        );
-      }
-    },
-    rootRef,
-  );
-  useEventListener(
-    'mouseout',
-    (event: MouseEvent) => {
-      if (!(event.target instanceof HTMLElement)) return;
-      if ('char' in event.target.dataset || 'stridx' in event.target.dataset) {
-        setChar(null);
-        setStridx(null);
-      }
-    },
-    rootRef,
-  );
+  return { strIdx, setStrIdx, char, setChar };
+}
+
+export const hsbMouseOverListener = ({setChar, setStrIdx}: HSBData) => (e: MouseEvent | React.MouseEvent) => {
+  if (!(e.target instanceof HTMLElement || e.target instanceof SVGElement)) return;
+  if ('char' in e.target.dataset || 'stridx' in e.target.dataset) {
+    setChar(e.target.dataset.char ?? null);
+    setStrIdx(
+      e.target.dataset.stridx === undefined
+        ? null
+        : parseInt(e.target.dataset.stridx),
+    );
+  }
+}
+export const hsbMouseOutListener = ({setChar, setStrIdx}: HSBData) => (e: MouseEvent | React.MouseEvent) => {
+  if (!(e.target instanceof HTMLElement || e.target instanceof SVGElement)) return;
+  if ('char' in e.target.dataset || 'stridx' in e.target.dataset) {
+    setChar(null);
+    setStrIdx(null);
+  }
+}
+
+export const HSBStyle: React.FC<{data: HSBData}> = ({data}) => {
   let style = '';
-  if (char !== null) style += `[data-char="${char}"] { --hovered-bg: cyan; }`;
-  if (stridx !== null)
-    style += `[data-stridx="${stridx}"] { --hovered-bg: lime; }`;
+  if (data.char !== null) {
+    style += `[data-char="${data.char}"] { --hovered-bg: cyan; }`;
+  }
+  if (data.strIdx !== null) {
+    style += `[data-stridx="${data.strIdx}"] { --hovered-bg: lime; }`;
+  }
   return <style>{style}</style>;
 };
-export default HoverStyleBodge;
+
+export const HSBGlobalListener: React.FC<{data: HSBData}> = ({data}) => {
+  const rootRef = useRef(document.documentElement);
+  useEventListener('mouseover', hsbMouseOverListener(data), rootRef);
+  useEventListener('mouseout', hsbMouseOutListener(data), rootRef);
+  return <></>;
+};

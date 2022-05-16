@@ -1,0 +1,15 @@
+.Tree .link {
+  fill: none;
+  stroke: black;
+}
+
+.Tree .node > circle {
+  stroke: black;
+  fill: var(--hovered-bg, #D3D3D3);
+}
+
+.Tree .node > text {
+  text-anchor: middle;
+  font-family: monospace;
+  pointer-events: none;
+}
