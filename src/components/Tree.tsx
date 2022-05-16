@@ -9,10 +9,15 @@ import { HSBData, hsbMouseOutListener, hsbMouseOverListener, to_domstr_represent
 const LEFT = 0;
 const RIGHT = 1;
 
-interface Node {
+interface LeafNode {
   char: string;
   bits: string;
+};
+interface BranchNode {
+  char: null;
+  bits: null;
 }
+type Node = LeafNode | BranchNode;
 
 class TreeNode {
   value: Node;
@@ -85,7 +90,7 @@ function createTree(text: string) {
 
   // make an array of nodes
   const nodeArray = new Array<TreeNode>();
-  const branchNode: Node = { char: '*', bits: '*' };
+  const branchNode: Node = { char: null, bits: null };
   charArray.forEach((ch) => {
     // Create new treenode with count and char
     let tempNode: Node = { char: ch.char, bits: '' };
@@ -186,7 +191,7 @@ function Tree(props: TreeProps) {
     node
       .append('circle')
       .attr('r', '15')
-      .attr('data-char', (d) => to_domstr_representation(d.data.value.char));
+      .attr('data-char', (d) => (d.data.value.char === null) ? null : to_domstr_representation(d.data.value.char));
 
     // adds the text to the node
     node
