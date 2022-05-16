@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { CommonArgs } from './common';
 import { HierarchyPointNode } from 'd3';
@@ -133,15 +133,27 @@ function Tree(props: TreeProps) {
   const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
+    // don't do anything if we don't have a ref to the svg yet.
+    // (this is mostly here to make sure typescript knows the ref will be non-null before we continue)
+    if(ref.current === null) return;
+    
     // appends a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
     const svg = d3
       .select(ref.current)
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom);
+
+    // clear out any existing elements
+    svg.selectAll('*').remove();
+
     const g = svg
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    
+    svg.call(d3.zoom<SVGSVGElement, unknown>().on('zoom', (e) => {
+      g.attr('transform', e.transform);
+    }));
 
     // adds the links between the nodes
     const link = g
@@ -193,7 +205,7 @@ function Tree(props: TreeProps) {
             return d.data.value.char;
         }
       });
-  }, [height, margin, nodes, width]);
+  }, [props.treeData]);
 
   return (
     <>
@@ -203,7 +215,8 @@ function Tree(props: TreeProps) {
 }
 
 const TreePanel: React.FC<CommonArgs> = ({ fileText }) => {
-  const tree = createTree(fileText);
+  const [tree, setTree] = useState<TreeNode>(() => createTree(fileText));
+  useEffect(() => { setTree(createTree(fileText)); }, [fileText]);
   return <Tree treeData={tree} />;
 };
 

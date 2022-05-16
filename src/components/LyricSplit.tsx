@@ -29,11 +29,16 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
         )}
         initialValue={{
           direction: 'row',
-          first: 'Tree',
+          splitPercentage: 100 / 3,
+          first: 'Text',
           second: {
             direction: 'row',
-            first: 'Text',
-            second: 'Hex',
+            first: {
+              direction: 'column',
+              first: 'Hex',
+              second: 'Binary',
+            },
+            second: 'Tree',
           },
         }}
       />
