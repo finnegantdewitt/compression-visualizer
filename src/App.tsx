@@ -11,9 +11,7 @@ function App() {
   const commonArgs: CommonArgs = { fileText, setFileText };
   return (
     <div className="App">
-      {/* <header className="App-header"> */}
-        <GetFile setFileText={setFileText} />
-      {/* </header> */}
+      <GetFile setFileText={setFileText} />
       <LyricSplit {...commonArgs} />
     </div>
   );
