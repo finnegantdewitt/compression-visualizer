@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import './TextPanel.css';
 import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
 

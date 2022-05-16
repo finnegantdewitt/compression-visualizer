@@ -1,18 +1,20 @@
 import React, { Fragment } from 'react';
 import HoverStyleBodge from './HoverStyleBodge';
 import TextPanel from './TextPanel';
-import HexPanel from './HexPanel';
+import { HexPanel, BinaryPanel } from './BytesPanel';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import { CommonArgs } from './common';
 import TreePanel from './Tree';
 
-type PanelType = 'Text' | 'Hex' | 'Tree';
+type PanelType = 'Text' | 'Hex' | 'Tree' | 'Binary';
 const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
   Text: TextPanel,
   Hex: HexPanel,
+  Binary: BinaryPanel,
   Tree: TreePanel,
 };
 
+// TODO: should rename `LyricSplit` to something more accurate
 const LyricSplit: React.FC<CommonArgs> = (params) => {
   return (
     <Fragment>
@@ -32,7 +34,7 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
             direction: 'row',
             first: 'Text',
             second: 'Hex',
-          }
+          },
         }}
       />
     </Fragment>
