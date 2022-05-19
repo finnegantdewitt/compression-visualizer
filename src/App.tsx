@@ -7,7 +7,6 @@ import Simple from './text/Simple_Test_Text';
 import { Tree, createTree } from './components/Tree';
 
 function App() {
-  let tree = createTree(Simple);
   const [fileText, setFileText] = useState<string | ArrayBuffer | null>(null);
   const [clock, setClock] = useState(0);
   const [play, setPlay] = useState(false);
@@ -17,7 +16,7 @@ function App() {
     if (clock !== -1 && play) {
       const interval = setInterval(() => {
         onClock();
-      }, 50);
+      }, 500);
       return () => clearInterval(interval);
     }
   }, [clock, play, displayString]);
@@ -25,7 +24,6 @@ function App() {
   function onClock() {
     if (displayString.length < Simple.length) {
       setDisplayString(displayString + Simple[displayString.length]);
-      console.log(displayString);
     }
   }
 
@@ -40,7 +38,8 @@ function App() {
         <button onClick={() => pressPlay()}>play</button>
         <LyricSplit lyrics={displayString} />
         <GetFile setFileText={setFileText} />
-        <Tree treeData={tree} />
+        <Tree displayString={displayString} />
+        <Tree displayString={Simple} />
         <div>{fileText?.toString()}</div>
       </header>
     </div>

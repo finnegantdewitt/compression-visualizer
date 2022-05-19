@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { create } from 'd3';
 
 const LEFT = 0;
 const RIGHT = 1;
@@ -112,7 +113,19 @@ interface TreeProps {
   treeData: TreeNode;
 }
 
-function Tree(props: TreeProps) {
+interface DisplayString {
+  displayString: string;
+}
+
+function Tree(props: DisplayString) {
+  const treeData = createTree(props.displayString);
+  console.log(props);
+  console.log(treeData);
+
+  if (treeData === undefined) {
+    return <></>;
+  }
+
   // set the dimensions and margins of the diagram
   const margin = { top: 0, right: 0, bottom: 0, left: 0 };
   const width = 600 - margin.left - margin.right;
@@ -122,7 +135,7 @@ function Tree(props: TreeProps) {
   const treemap = d3.tree().size([height, width]);
 
   //  assigns the data to a hierarchy using parent-child relationships
-  let nodes: any = d3.hierarchy(props.treeData, (d: any) => d.descendants);
+  let nodes: any = d3.hierarchy(treeData, (d: any) => d.descendants);
 
   // maps the node data to the tree layout
   nodes = treemap(nodes);
