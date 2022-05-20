@@ -129,8 +129,11 @@ function Tree(props: TreeProps) {
   const width = 600 - margin.left - margin.right;
   const height = 750 - margin.top - margin.bottom;
 
+  const nodeRadius = 15;
+
   // Declares a tree layout and assigns the size
-  const treemap = d3.tree<TreeNode>().size([height, width]);
+  const treemap = d3.tree<TreeNode>()//.size([height, width]);
+    .nodeSize([nodeRadius * 3, nodeRadius * 3]);
 
   //  assigns the data to a hierarchy using parent-child relationships
   const nodes_hierarchy: d3.HierarchyNode<TreeNode> = d3.hierarchy(props.treeData, (d) => d.descendants);
@@ -148,9 +151,7 @@ function Tree(props: TreeProps) {
     // appends a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
     const svg = d3
-      .select(ref.current)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom);
+      .select(ref.current);
 
     // clear out any existing elements
     svg.selectAll('*').remove();
@@ -190,7 +191,7 @@ function Tree(props: TreeProps) {
     // adds the circle to the node
     node
       .append('circle')
-      .attr('r', '15')
+      .attr('r', nodeRadius)
       .attr('data-char', (d) => (d.data.value.char === null) ? null : to_domstr_representation(d.data.value.char));
 
     // adds the text to the node
