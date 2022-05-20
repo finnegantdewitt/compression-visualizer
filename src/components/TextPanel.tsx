@@ -1,4 +1,6 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, ReactElement, useEffect, useState } from 'react';
+import './TextPanel.css';
+import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
 
 const display_chars: Record<string, string> = {
@@ -43,28 +45,31 @@ const display_chars: Record<string, string> = {
   ' ': '•',
 };
 const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
-  return (
-    <Fragment>
-      <div data-char={to_domstr_representation(char)} data-stridx={idx}>
-        {display_chars[char] ?? char}
-      </div>
-      {
-        char === '\n' ? (
-          <br></br>
-        ) : (
-          <Fragment></Fragment>
-        ) /* TODO prob a cleaner way to write this */
-      }
-    </Fragment>
-  );
-};
-const TextPanel = ({ text }: { text: string }) => {
-  return (
-    <div className="TextPanel">
-      {[...text].map((char, idx) => (
-        <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
-      ))}
+  const elem = (
+    <div data-char={to_domstr_representation(char)} data-stridx={idx}>
+      {display_chars[char] ?? char}
     </div>
   );
+  if (char === '\n') {
+    return (
+      <Fragment>
+        {elem}
+        <br />
+      </Fragment>
+    );
+  } else {
+    return elem;
+  }
+};
+const TextPanel: React.FC<CommonArgs> = ({ fileText }) => {
+  const [children, setChildren] = useState<ReactElement[]>([]);
+  useEffect(() => {
+    setChildren(
+      [...fileText].map((char, idx) => (
+        <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
+      )),
+    );
+  }, [fileText]);
+  return <div className="TextPanel">{children}</div>;
 };
 export default TextPanel;

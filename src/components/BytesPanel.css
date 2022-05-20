@@ -1,0 +1,14 @@
+.BytesPanel {
+  height: 100%;
+  overflow-y: scroll;
+  font-family: monospace;
+  cursor: default;
+  display: flex;
+  align-content: flex-start;
+  flex-wrap: wrap;
+}
+.BytesPanel > div {
+  background-color: var(--hovered-bg, transparent);
+  padding-left: 0.5ch;
+  padding-right: 0.5ch;
+}

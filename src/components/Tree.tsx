@@ -1,13 +1,23 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import './Tree.css';
 import * as d3 from 'd3';
+import { CommonArgs } from './common';
+import { HierarchyPointNode } from 'd3';
+import { assert } from '../util';
+import { HSBData, hsbMouseOutListener, hsbMouseOverListener, to_domstr_representation } from './HoverStyleBodge';
 
 const LEFT = 0;
 const RIGHT = 1;
 
-interface Node {
+interface LeafNode {
   char: string;
   bits: string;
+};
+interface BranchNode {
+  char: null;
+  bits: null;
 }
+type Node = LeafNode | BranchNode;
 
 class TreeNode {
   value: Node;
@@ -80,7 +90,7 @@ function createTree(text: string) {
 
   // make an array of nodes
   const nodeArray = new Array<TreeNode>();
-  const branchNode: Node = { char: '*', bits: '*' };
+  const branchNode: Node = { char: null, bits: null };
   charArray.forEach((ch) => {
     // Create new treenode with count and char
     let tempNode: Node = { char: ch.char, bits: '' };
@@ -110,6 +120,7 @@ function createTree(text: string) {
 
 interface TreeProps {
   treeData: TreeNode;
+  hsbData: HSBData;
 }
 
 function Tree(props: TreeProps) {
@@ -119,26 +130,38 @@ function Tree(props: TreeProps) {
   const height = 750 - margin.top - margin.bottom;
 
   // Declares a tree layout and assigns the size
-  const treemap = d3.tree().size([height, width]);
+  const treemap = d3.tree<TreeNode>().size([height, width]);
 
   //  assigns the data to a hierarchy using parent-child relationships
-  let nodes: any = d3.hierarchy(props.treeData, (d: any) => d.descendants);
+  const nodes_hierarchy: d3.HierarchyNode<TreeNode> = d3.hierarchy(props.treeData, (d) => d.descendants);
 
   // maps the node data to the tree layout
-  nodes = treemap(nodes);
+  const nodes: d3.HierarchyPointNode<TreeNode> = treemap(nodes_hierarchy);
 
-  const ref: any = useRef();
+  const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
+    // don't do anything if we don't have a ref to the svg yet.
+    // (this is mostly here to make sure typescript knows the ref will be non-null before we continue)
+    if(ref.current === null) return;
+    
     // appends a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
     const svg = d3
       .select(ref.current)
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom);
+
+    // clear out any existing elements
+    svg.selectAll('*').remove();
+
     const g = svg
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    
+    svg.call(d3.zoom<SVGSVGElement, unknown>().on('zoom', (e) => {
+      g.attr('transform', e.transform);
+    }));
 
     // adds the links between the nodes
     const link = g
@@ -147,10 +170,9 @@ function Tree(props: TreeProps) {
       .enter()
       .append('path')
       .attr('class', 'link')
-      .attr('fill', 'none')
-      .style('stroke', 'black')
-      .attr('d', (d: any) => {
-        return 'M' + d.x + ',' + d.y + ' ' + d.parent.x + ',' + d.parent.y;
+      .attr('d', (d) => {
+        if(d.parent === null) return ''; // should be unreachable since we do the slice, but just in case
+        else return `M${d.x},${d.y} ${d.parent.x},${d.parent.y}`;
       });
 
     // adds each node as a group
@@ -161,16 +183,15 @@ function Tree(props: TreeProps) {
       .append('g')
       .attr(
         'class',
-        (d: any) => 'node' + (d.children ? ' node--internal' : ' node--leaf'),
+        (d) => 'node' + (d.children ? ' node--internal' : ' node--leaf'),
       )
-      .attr('transform', (d: any) => 'translate(' + d.x + ',' + d.y + ')');
+      .attr('transform', (d) => 'translate(' + d.x + ',' + d.y + ')');
 
     // adds the circle to the node
     node
       .append('circle')
       .attr('r', '15')
-      .style('stroke', 'black')
-      .style('fill', '#D3D3D3'); //Light gray
+      .attr('data-char', (d) => (d.data.value.char === null) ? null : to_domstr_representation(d.data.value.char));
 
     // adds the text to the node
     node
@@ -178,8 +199,7 @@ function Tree(props: TreeProps) {
       .attr('dy', '.35em')
       .attr('x', '-0')
       .attr('y', '0')
-      .style('text-anchor', 'middle')
-      .text((d: any) => {
+      .text((d) => {
         switch (d.data.value.char) {
           case ' ':
             return '_';
@@ -189,13 +209,19 @@ function Tree(props: TreeProps) {
             return d.data.value.char;
         }
       });
-  }, [height, margin, nodes, width]);
+  }, [props.treeData]);
 
   return (
     <>
-      <svg ref={ref} viewBox={`0 0 ${height} ${width}`} />
+      <svg className='Tree' ref={ref} onMouseOver={hsbMouseOverListener(props.hsbData)} onMouseOut={hsbMouseOutListener(props.hsbData)} />
     </>
   );
 }
 
-export { Tree, createTree };
+const TreePanel: React.FC<CommonArgs> = ({ fileText, hsbData }) => {
+  const [tree, setTree] = useState<TreeNode>(() => createTree(fileText));
+  useEffect(() => { setTree(createTree(fileText)); }, [fileText]);
+  return <Tree treeData={tree} hsbData={hsbData} />;
+};
+
+export default TreePanel;
