@@ -4,10 +4,14 @@ import LyricSplit from './components/LyricSplit';
 import Never_Gonna_Lyrics from './text/Never_Gonna';
 import GetFile from './components/showFile';
 import Simple from './text/Simple_Test_Text';
-import { Tree, createTree } from './components/Tree';
+import { CommonArgs } from './components/common';
+import { useHsbData } from './components/HoverStyleBodge';
 
 function App() {
-  const [fileText, setFileText] = useState<string | ArrayBuffer | null>(null);
+  const [fileText, setFileText] = useState<string>(Never_Gonna_Lyrics);
+  const hsbData = useHsbData();
+  const commonArgs: CommonArgs = { fileText, setFileText, hsbData };
+
   const [clock, setClock] = useState(0);
   const [play, setPlay] = useState(false);
   const [displayString, setDisplayString] = useState('');
@@ -34,14 +38,9 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <button onClick={() => pressPlay()}>play</button>
-        <LyricSplit lyrics={displayString} />
-        <GetFile setFileText={setFileText} />
-        <Tree displayString={displayString} />
-        <Tree displayString={Simple} />
-        <div>{fileText?.toString()}</div>
-      </header>
+      <button onClick={() => pressPlay()}>play</button>
+      <GetFile setFileText={setFileText} />
+      <LyricSplit {...commonArgs} />
     </div>
   );
 }

@@ -1,17 +1,50 @@
-import React, { Fragment } from 'react';
-import Splitter from '@devbookhq/splitter';
-import HoverStyleBodge from './HoverStyleBodge';
+import React, { Fragment, useState } from 'react';
+import { HSBGlobalListener, HSBStyle } from './HoverStyleBodge';
 import TextPanel from './TextPanel';
-import HexPanel from './HexPanel';
+import { HexPanel, BinaryPanel } from './BytesPanel';
+import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
+import { CommonArgs } from './common';
+import TreePanel from './Tree';
 
-const LyricSplit = ({ lyrics }: { readonly lyrics: string }) => {
+type PanelType = 'Text' | 'Hex' | 'Tree' | 'Binary';
+const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
+  Text: TextPanel,
+  Hex: HexPanel,
+  Binary: BinaryPanel,
+  Tree: TreePanel,
+};
+
+// TODO: should rename `LyricSplit` to something more accurate
+const LyricSplit: React.FC<CommonArgs> = (params) => {
+  const [mosaicValue, setMosaicValue] = useState<MosaicNode<PanelType> | null>({
+    direction: 'row',
+    splitPercentage: 100 / 3,
+    first: 'Text',
+    second: {
+      direction: 'row',
+      first: {
+        direction: 'column',
+        first: 'Hex',
+        second: 'Binary',
+      },
+      second: 'Tree',
+    },
+  });
   return (
     <Fragment>
-      <HoverStyleBodge></HoverStyleBodge>
-      <Splitter>
-        <TextPanel text={lyrics}></TextPanel>
-        <HexPanel text={lyrics}></HexPanel>
-      </Splitter>
+      <HSBStyle data={params.hsbData} />
+      <HSBGlobalListener data={params.hsbData} />
+      <Mosaic<PanelType>
+        className="mosaic-blueprint-theme bp4-dark"
+        blueprintNamespace="bp4"
+        renderTile={(id, path) => (
+          <MosaicWindow<PanelType> path={path} title={id}>
+            {React.createElement(paneltypeComponentMap[id], params, null)}
+          </MosaicWindow>
+        )}
+        value={mosaicValue}
+        onChange={setMosaicValue}
+      />
     </Fragment>
   );
 };
