@@ -61,15 +61,30 @@ const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
     return elem;
   }
 };
-const TextPanel: React.FC<CommonArgs> = ({ fileText }) => {
+const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
   const [children, setChildren] = useState<ReactElement[]>([]);
   useEffect(() => {
     setChildren(
-      [...fileText].map((char, idx) => (
+      [...displayText].map((char, idx) => (
         <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
       )),
     );
-  }, [fileText]);
+  }, [displayText]);
   return <div className="TextPanel">{children}</div>;
 };
 export default TextPanel;
+
+export const StepsPanel: React.FC<CommonArgs> = () => {
+  return (
+    <>
+      <div>
+        <ol>
+          <li>Read the text</li>
+          <li>Count the frequency of each letter</li>
+          <li>Build the tree</li>
+        </ol>
+      </div>
+      <div></div>
+    </>
+  );
+};

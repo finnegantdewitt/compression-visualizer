@@ -1,14 +1,15 @@
 import React, { Fragment, useState } from 'react';
 import { HSBGlobalListener, HSBStyle } from './HoverStyleBodge';
-import TextPanel from './TextPanel';
+import TextPanel, { StepsPanel } from './TextPanel';
 import { HexPanel, BinaryPanel } from './BytesPanel';
 import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import { CommonArgs } from './common';
 import TreePanel from './Tree';
 
-type PanelType = 'Text' | 'Hex' | 'Tree' | 'Binary';
+type PanelType = 'Text' | 'Hex' | 'Tree' | 'Binary' | 'Steps';
 const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
   Text: TextPanel,
+  Steps: StepsPanel,
   Hex: HexPanel,
   Binary: BinaryPanel,
   Tree: TreePanel,
@@ -19,7 +20,11 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
   const [mosaicValue, setMosaicValue] = useState<MosaicNode<PanelType> | null>({
     direction: 'row',
     splitPercentage: 100 / 3,
-    first: 'Text',
+    first: {
+      direction: 'column',
+      first: 'Text',
+      second: 'Steps',
+    },
     second: {
       direction: 'row',
       first: {

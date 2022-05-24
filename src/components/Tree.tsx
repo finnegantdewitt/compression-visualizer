@@ -132,9 +132,10 @@ function Tree(props: TreeProps) {
   if (props.treeData === undefined) {
     return <></>;
   }
+  // console.log('HI');
 
   // set the dimensions and margins of the diagram
-  const margin = { top: 0, right: 0, bottom: 0, left: 0 };
+  const margin = { top: 50, right: 0, bottom: 0, left: 0 };
   const width = 600 - margin.left - margin.right;
   const height = 750 - margin.top - margin.bottom;
 
@@ -142,8 +143,9 @@ function Tree(props: TreeProps) {
 
   // Declares a tree layout and assigns the size
   const treemap = d3
-    .tree<TreeNode>() //.size([height, width]);
-    .nodeSize([nodeRadius * 3, nodeRadius * 3]);
+    .tree<TreeNode>()
+    .nodeSize([nodeRadius * 3, nodeRadius * 3])
+    .size([height, width]);
 
   //  assigns the data to a hierarchy using parent-child relationships
   const nodes_hierarchy: d3.HierarchyNode<TreeNode> = d3.hierarchy(
@@ -243,11 +245,14 @@ function Tree(props: TreeProps) {
   );
 }
 
-const TreePanel: React.FC<CommonArgs> = ({ fileText, hsbData }) => {
-  const [tree, setTree] = useState<TreeNode>(() => createTree(fileText));
+const TreePanel: React.FC<CommonArgs> = ({ displayText, hsbData }) => {
+  if (displayText === undefined) {
+    return <></>;
+  }
+  const [tree, setTree] = useState<TreeNode>(() => createTree(displayText));
   useEffect(() => {
-    setTree(createTree(fileText));
-  }, [fileText]);
+    setTree(createTree(displayText));
+  }, [displayText]);
   return <Tree treeData={tree} hsbData={hsbData} />;
 };
 

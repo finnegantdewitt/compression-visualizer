@@ -6,16 +6,40 @@ import GetFile from './components/showFile';
 import Simple from './text/Simple_Test_Text';
 import { CommonArgs } from './components/common';
 import { useHsbData } from './components/HoverStyleBodge';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
 function App() {
-  const [fileText, setFileText] = useState<string>(Never_Gonna_Lyrics);
+  const [sourceText, setSourceText] = useState(Simple);
+  const [displayText, setDisplayText] = useState<string>('');
+  const [treeText, setTreeText] = useState<string>('');
   const hsbData = useHsbData();
-  const commonArgs: CommonArgs = { fileText, setFileText, hsbData };
+  const commonArgs: CommonArgs = { displayText, setDisplayText, hsbData };
 
   const [clock, setClock] = useState(0);
   const [play, setPlay] = useState(false);
-  const [displayString, setDisplayString] = useState('');
+  const [animText, setAnimText] = useState(false);
 
+  // display text anim
+  useEffect(() => {
+    if (animText) {
+      const interval = setInterval(() => {
+        showText();
+      }, 50);
+      return () => clearInterval(interval);
+    }
+  }, [animText, displayText]);
+
+  function showText() {
+    // display text
+    if (displayText.length < sourceText.length) {
+      setDisplayText(displayText + sourceText[displayText.length]);
+    } else {
+      setAnimText(false);
+    }
+  }
+
+  // anim tree
   useEffect(() => {
     if (clock !== -1 && play) {
       const interval = setInterval(() => {
@@ -23,13 +47,9 @@ function App() {
       }, 500);
       return () => clearInterval(interval);
     }
-  }, [clock, play, displayString]);
+  }, [clock, play, displayText]);
 
-  function onClock() {
-    if (displayString.length < Simple.length) {
-      setDisplayString(displayString + Simple[displayString.length]);
-    }
-  }
+  function onClock() {}
 
   function pressPlay() {
     setPlay(!play);
@@ -38,8 +58,25 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={() => pressPlay()}>play</button>
-      <GetFile setFileText={setFileText} />
+      <div>
+        <button onClick={() => pressPlay()}>
+          {play ? (
+            <FontAwesomeIcon icon={faPause} />
+          ) : (
+            <FontAwesomeIcon icon={faPlay} />
+          )}
+        </button>
+        <button onClick={() => setAnimText(!animText)}>anim_text</button>
+        <button onClick={() => setDisplayText(sourceText)}>
+          display_source
+        </button>
+        <button onClick={() => setDisplayText('')}>clear_display_text</button>
+        <button onClick={() => setSourceText(Simple)}>simple</button>
+        <button onClick={() => setSourceText(Never_Gonna_Lyrics)}>
+          Never_Gonna
+        </button>
+      </div>
+      <GetFile setDisplayText={setDisplayText} />
       <LyricSplit {...commonArgs} />
     </div>
   );
