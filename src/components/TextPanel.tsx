@@ -2,6 +2,7 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import './TextPanel.css';
 import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
+import { useSpring, Spring } from 'react-spring';
 
 const display_chars: Record<string, string> = {
   // https://www.compart.com/en/unicode/block/U+2400
@@ -62,19 +63,65 @@ const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
   }
 };
 const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
-  const [children, setChildren] = useState<ReactElement[]>([]);
-  useEffect(() => {
-    setChildren(
-      [...displayText].map((char, idx) => (
-        <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
-      )),
-    );
-  }, [displayText]);
-  return <div className="TextPanel">{children}</div>;
+  // const [children, setChildren] = useState<ReactElement[]>([]);
+  // useEffect(() => {
+  //   setChildren(
+  //     [...displayText].map((char, idx) => (
+  //       <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
+  //     )),
+  //   );
+  // }, [displayText]);
+  return (
+    <div className="TextPanel">
+      <Spring
+        from={{ text: '' }}
+        to={{ text: displayText }}
+        config={{ duration: 10000 }}
+      >
+        {(props) => {
+          return <p>{props.text}</p>;
+        }}
+      </Spring>
+    </div>
+  );
 };
 export default TextPanel;
 
-export const StepsPanel: React.FC<CommonArgs> = () => {
+interface Char {
+  char: string;
+  count: number;
+}
+
+export const StepsPanel: React.FC<CommonArgs> = ({
+  displayText,
+  isFreqTableDisplayed,
+}) => {
+  // count the freqs of chars with a hashmaps
+  console.log(displayText);
+  const charFreqs = new Map<string, number>();
+  for (let i = 0; i < displayText.length; i++) {
+    let letter = displayText[i];
+    let letterFreq = charFreqs.get(letter);
+    if (letterFreq === undefined) {
+      letterFreq = 0;
+    }
+    letterFreq += 1;
+    charFreqs.set(letter, letterFreq);
+  }
+
+  // sort them in an array
+  const charArray = new Array<Char>();
+  charFreqs.forEach((value, key) => {
+    let ch: Char = {
+      char: key,
+      count: value,
+    };
+    charArray.push(ch);
+  });
+  charArray.sort((a, b) => {
+    return a.count - b.count; // ascending order
+  });
+
   return (
     <>
       <div>
@@ -84,7 +131,22 @@ export const StepsPanel: React.FC<CommonArgs> = () => {
           <li>Build the tree</li>
         </ol>
       </div>
-      <div></div>
+      <div>
+        <table>
+          <tr>
+            <th>char</th>
+            <th>freq</th>
+          </tr>
+          {charArray.map((char) => {
+            return (
+              <tr>
+                <td>{display_chars[char.char] ?? char.char}</td>
+                <td>{char.count}</td>
+              </tr>
+            );
+          })}
+        </table>
+      </div>
     </>
   );
 };

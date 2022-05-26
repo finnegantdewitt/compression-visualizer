@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import LyricSplit from './components/LyricSplit';
 import Never_Gonna_Lyrics from './text/Never_Gonna';
@@ -14,47 +14,62 @@ function App() {
   const [displayText, setDisplayText] = useState<string>('');
   const [treeText, setTreeText] = useState<string>('');
   const hsbData = useHsbData();
-  const commonArgs: CommonArgs = { displayText, setDisplayText, hsbData };
 
+  // animation variables
   const [clock, setClock] = useState(0);
   const [play, setPlay] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [animText, setAnimText] = useState(false);
+
+  // state of what is being displayed
+  const [isTextDisplayed, setIsTextDisplayed] = useState(false);
+  const [isFreqTableDisplayed, setIsFreqTableDisplayed] = useState(false);
+
+  const commonArgs: CommonArgs = {
+    displayText,
+    setDisplayText,
+    hsbData,
+    isFreqTableDisplayed,
+  };
 
   // display text anim
   useEffect(() => {
     if (animText) {
       const interval = setInterval(() => {
-        showText();
+        animateDisplayText();
       }, 50);
       return () => clearInterval(interval);
     }
   }, [animText, displayText]);
 
-  function showText() {
+  function animateDisplayText() {
     // display text
     if (displayText.length < sourceText.length) {
       setDisplayText(displayText + sourceText[displayText.length]);
     } else {
+      setIsTextDisplayed(true);
       setAnimText(false);
     }
   }
 
-  // anim tree
-  useEffect(() => {
-    if (clock !== -1 && play) {
-      const interval = setInterval(() => {
-        onClock();
-      }, 500);
-      return () => clearInterval(interval);
-    }
-  }, [clock, play, displayText]);
-
-  function onClock() {}
-
-  function pressPlay() {
-    setPlay(!play);
-    onClock();
+  function clearDisplayText() {
+    setDisplayText('');
+    setIsTextDisplayed(false);
   }
+
+  // anim tree
+  // useEffect(() => {
+  //   if (clock !== -1 && play) {
+  //     const interval = setInterval(() => {
+  //       onClock();
+  //     }, 500);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [clock, play, displayText]);
+
+  // function onClock() {}
+
+  function pressPlay() {}
 
   return (
     <div className="App">
@@ -70,7 +85,7 @@ function App() {
         <button onClick={() => setDisplayText(sourceText)}>
           display_source
         </button>
-        <button onClick={() => setDisplayText('')}>clear_display_text</button>
+        <button onClick={() => clearDisplayText()}>clear_display_text</button>
         <button onClick={() => setSourceText(Simple)}>simple</button>
         <button onClick={() => setSourceText(Never_Gonna_Lyrics)}>
           Never_Gonna
