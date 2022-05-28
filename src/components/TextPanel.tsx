@@ -2,7 +2,7 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import './TextPanel.css';
 import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
-import { useSpring, Spring } from 'react-spring';
+import { useTrail, a } from '@react-spring/web';
 
 const display_chars: Record<string, string> = {
   // https://www.compart.com/en/unicode/block/U+2400
@@ -62,26 +62,41 @@ const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
     return elem;
   }
 };
-const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
-  // const [children, setChildren] = useState<ReactElement[]>([]);
-  // useEffect(() => {
-  //   setChildren(
-  //     [...displayText].map((char, idx) => (
-  //       <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
-  //     )),
-  //   );
-  // }, [displayText]);
+
+const LetterRevealAmin: React.FC<{
+  open: boolean;
+  children: React.ReactNode;
+}> = ({ open, children }) => {
+  const items = React.Children.toArray(children);
+  const trail = useTrail(items.length, {
+    config: { mass: 5, tension: 2000, friction: 200 },
+    opacity: open ? 1 : 0,
+    from: { opacity: 0 },
+  });
   return (
     <div className="TextPanel">
-      <Spring
-        from={{ text: '' }}
-        to={{ text: displayText }}
-        config={{ duration: 10000 }}
-      >
-        {(props) => {
-          return <p>{props.text}</p>;
-        }}
-      </Spring>
+      {trail.map((style, index) => (
+        <a.div key={index} style={style}>
+          {items[index]}
+        </a.div>
+      ))}
+    </div>
+  );
+};
+
+const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
+  const [children, setChildren] = useState<ReactElement[]>([]);
+  const [open, set] = useState(true);
+  useEffect(() => {
+    setChildren(
+      [...displayText].map((char, idx) => (
+        <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
+      )),
+    );
+  }, [displayText]);
+  return (
+    <div onClick={() => set((state) => !state)}>
+      <LetterRevealAmin open={open}>{children}</LetterRevealAmin>
     </div>
   );
 };
