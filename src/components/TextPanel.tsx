@@ -63,30 +63,47 @@ const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
   }
 };
 
-const LetterRevealAmin: React.FC<{
-  open: boolean;
-  children: React.ReactNode;
-}> = ({ open, children }) => {
-  const items = React.Children.toArray(children);
-  const trail = useTrail(items.length, {
-    config: { mass: 5, tension: 2000, friction: 200 },
-    opacity: open ? 1 : 0,
-    from: { opacity: 0 },
-  });
-  return (
-    <div className="TextPanel">
-      {trail.map((style, index) => (
-        <a.div key={index} style={style}>
-          {items[index]}
-        </a.div>
-      ))}
-    </div>
-  );
-};
+// const LetterRevealAmin: React.FC<{
+//   open: boolean;
+//   children: React.ReactNode;
+// }> = ({ open, children }) => {
+//   const items = React.Children.toArray(children);
+//   const trail = useTrail(items.length, {
+//     config: { mass: 1, tension: 20000, friction: 200 },
+//     opacity: open ? 1 : 0,
+//     from: { opacity: 0 },
+//   });
+//   return (
+//     <div className="TextPanel">
+//       {trail.map((style, index) => (
+//         <a.div key={index} style={style}>
+//           {items[index]}
+//         </a.div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
+//   const [children, setChildren] = useState<ReactElement[]>([]);
+//   const [open, set] = useState(true);
+//   useEffect(() => {
+//     setChildren(
+//       [...displayText].map((char, idx) => (
+//         <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
+//       )),
+//     );
+//   }, [displayText]);
+//   return (
+//     <div onClick={() => set((state) => !state)}>
+//       <LetterRevealAmin open={open}>{children}</LetterRevealAmin>
+//     </div>
+//   );
+// };
+// export default TextPanel;
 
 const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
   const [children, setChildren] = useState<ReactElement[]>([]);
-  const [open, set] = useState(true);
   useEffect(() => {
     setChildren(
       [...displayText].map((char, idx) => (
@@ -94,11 +111,7 @@ const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
       )),
     );
   }, [displayText]);
-  return (
-    <div onClick={() => set((state) => !state)}>
-      <LetterRevealAmin open={open}>{children}</LetterRevealAmin>
-    </div>
-  );
+  return <div className="TextPanel">{children}</div>;
 };
 export default TextPanel;
 
@@ -148,18 +161,22 @@ export const StepsPanel: React.FC<CommonArgs> = ({
       </div>
       <div>
         <table>
-          <tr>
-            <th>char</th>
-            <th>freq</th>
-          </tr>
-          {charArray.map((char) => {
-            return (
-              <tr>
-                <td>{display_chars[char.char] ?? char.char}</td>
-                <td>{char.count}</td>
-              </tr>
-            );
-          })}
+          <thead>
+            <tr>
+              <th>char</th>
+              <th>freq</th>
+            </tr>
+          </thead>
+          <tbody>
+            {charArray.map((char, idx) => {
+              return (
+                <tr key={idx}>
+                  <td>{display_chars[char.char] ?? char.char}</td>
+                  <td>{char.count}</td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
       </div>
     </>

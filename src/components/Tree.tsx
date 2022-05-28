@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import './Tree.css';
 import * as d3 from 'd3';
 import { CommonArgs } from './common';
@@ -132,12 +132,32 @@ function Tree(props: TreeProps) {
   if (props.treeData === undefined) {
     return <></>;
   }
-  // console.log('HI');
-
+  const margin = { top: 50, right: 0, bottom: 30, left: 0 };
+  const [width, setHeight] = useState<any>(750 - margin.top - margin.bottom);
+  const [height, setWidth] = useState<any>(600 - margin.left - margin.right);
   // set the dimensions and margins of the diagram
-  const margin = { top: 50, right: 0, bottom: 0, left: 0 };
-  const width = 600 - margin.left - margin.right;
-  const height = 750 - margin.top - margin.bottom;
+  // setHeight(750 - margin.top - margin.bottom);
+  // setWidth(600 - margin.left - margin.right);
+
+  const [pageHeight, setPageHeight] = useState<number | undefined>(0);
+  const [pageWidth, setPageWidth] = useState<number | undefined>(0);
+  useLayoutEffect(() => {
+    setPageHeight(ref.current?.clientHeight);
+    setPageWidth(ref.current?.clientWidth);
+    if (
+      typeof pageHeight === 'number' &&
+      typeof pageWidth === 'number' &&
+      pageHeight > 0 &&
+      pageWidth > 0
+    ) {
+      setHeight(pageHeight - margin.top - margin.bottom);
+      setWidth(pageWidth - margin.left - margin.right);
+      console.log('Page Height: %d', pageHeight);
+      console.log('Page Width: %d', pageWidth);
+    }
+  });
+  // console.log('Page Height: %d', pageHeight);
+  // console.log('Page Width: %d', pageWidth);
 
   const nodeRadius = 15;
 
@@ -231,7 +251,7 @@ function Tree(props: TreeProps) {
             return d.data.value.char;
         }
       });
-  }, [props.treeData]);
+  }, [props.treeData, width, height]);
 
   return (
     <>
@@ -250,6 +270,7 @@ const TreePanel: React.FC<CommonArgs> = ({ displayText, hsbData }) => {
     return <></>;
   }
   const [tree, setTree] = useState<TreeNode>(() => createTree(displayText));
+
   useEffect(() => {
     setTree(createTree(displayText));
   }, [displayText]);
