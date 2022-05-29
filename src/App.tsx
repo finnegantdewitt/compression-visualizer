@@ -26,7 +26,7 @@ function App() {
   const [isTextDisplayed, setIsTextDisplayed] = useState(false);
   const [isFreqTableDisplayed, setIsFreqTableDisplayed] = useState(false);
 
-  const [tree, setTree] = useState<TreeNode | undefined>(undefined);
+  const [tree, setTree] = useState<Array<TreeNode | undefined>>([]);
 
   const commonArgs: CommonArgs = {
     displayText,
@@ -59,6 +59,7 @@ function App() {
 
   function clearDisplayText() {
     setDisplayText('');
+    setTree([]);
     setIsTextDisplayed(false);
   }
 

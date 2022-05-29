@@ -14,14 +14,14 @@ type Node = LeafNode | BranchNode;
 class TreeNode {
   value: Node;
   descendants: Array<TreeNode>;
-  isBranch: boolean;
+  isInvisible: boolean; // will be used to create an inviable root for separate trees
   parent?: TreeNode; // if undefined, root
   count: number; // Frequency of node
 
-  constructor(value: Node, isBranch: boolean, count: number) {
+  constructor(value: Node, isInvisible: boolean, count: number) {
     this.value = value;
     this.descendants = [];
-    this.isBranch = isBranch;
+    this.isInvisible = isInvisible;
     this.parent = undefined;
     this.count = count;
   }

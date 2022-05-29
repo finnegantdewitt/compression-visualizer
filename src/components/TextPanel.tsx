@@ -65,45 +65,6 @@ const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
   }
 };
 
-// const LetterRevealAmin: React.FC<{
-//   open: boolean;
-//   children: React.ReactNode;
-// }> = ({ open, children }) => {
-//   const items = React.Children.toArray(children);
-//   const trail = useTrail(items.length, {
-//     config: { mass: 1, tension: 20000, friction: 200 },
-//     opacity: open ? 1 : 0,
-//     from: { opacity: 0 },
-//   });
-//   return (
-//     <div className="TextPanel">
-//       {trail.map((style, index) => (
-//         <a.div key={index} style={style}>
-//           {items[index]}
-//         </a.div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
-//   const [children, setChildren] = useState<ReactElement[]>([]);
-//   const [open, set] = useState(true);
-//   useEffect(() => {
-//     setChildren(
-//       [...displayText].map((char, idx) => (
-//         <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
-//       )),
-//     );
-//   }, [displayText]);
-//   return (
-//     <div onClick={() => set((state) => !state)}>
-//       <LetterRevealAmin open={open}>{children}</LetterRevealAmin>
-//     </div>
-//   );
-// };
-// export default TextPanel;
-
 const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
   const [children, setChildren] = useState<ReactElement[]>([]);
   useEffect(() => {
@@ -192,25 +153,49 @@ export const StepsPanel: React.FC<CommonArgs> = ({
     const branchNode: Node = { char: null, bits: null };
     if (nodeArray.length > 1) {
       let tempCount = nodeArray[0].count + nodeArray[1].count;
-      let temp = new TreeNode(branchNode, true, tempCount);
+      let temp = new TreeNode(branchNode, false, tempCount);
       temp.left = nodeArray[0];
       temp.right = nodeArray[1];
-      setNodeArray((existingNodes) => {
-        return existingNodes.slice(2);
-      });
       let insertAt = nodeArray.findIndex((element) => {
-        return element.count >= tempCount;
+        return element.count > tempCount;
       });
+      // I have to do all this messy setArray stuff in
+      // a single statement because otherwise it won't
+      // update before calling the next setArray.
+      // Everything done in here is assuming that the
+      // first two element we will remove are still in
+      // the array.
       if (insertAt !== -1) {
-        setNodeArray((prevNodes) => [
-          ...prevNodes.slice(0, insertAt),
-          temp,
-          ...prevNodes.slice(insertAt),
-        ]);
+        // inserts temp at the insertAt
+        // then removes the first two elements
+        setNodeArray((prevNodes) => {
+          let inserted = [
+            ...prevNodes.slice(0, insertAt),
+            temp,
+            ...prevNodes.slice(insertAt),
+          ];
+          let firstTwoRemoved = inserted.slice(2);
+          return firstTwoRemoved;
+        });
       } else {
-        setNodeArray((prevNodes) => [...prevNodes, temp]);
+        // inserts temp at the end
+        // then removes the first two elements
+        setNodeArray((prevNodes) => {
+          let pushed = [...prevNodes, temp];
+          let firstTwoRemoved = pushed.slice(2);
+          return firstTwoRemoved;
+        });
       }
-      setTree(temp);
+      setTree((prev) => {
+        let treeNodes = [];
+        prev.forEach((tNode) => {
+          if (tNode?.parent === undefined) {
+            treeNodes.push(tNode);
+          }
+        });
+        treeNodes.push(temp);
+        return treeNodes;
+      });
     }
   };
 
@@ -221,7 +206,7 @@ export const StepsPanel: React.FC<CommonArgs> = ({
           <li>Read the text</li>
           <li>
             Count the frequency of each letter{' '}
-            <button onClick={() => push()}>debug push</button>
+            {/* <button onClick={() => push()}>debug push</button> */}
           </li>
           <li>
             Build the tree <button onClick={() => build()}>Build</button>

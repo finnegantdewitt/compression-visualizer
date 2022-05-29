@@ -13,67 +13,6 @@ import {
 
 import { TreeNode, Node } from '../classes/TreeNode';
 
-interface Char {
-  char: string;
-  count: number;
-}
-
-function createTree(text: string) {
-  // count the freqs of chars with a hashmaps
-  const charFreqs = new Map<string, number>();
-  for (let i = 0; i < text.length; i++) {
-    let letter = text[i];
-    let letterFreq = charFreqs.get(letter);
-    if (letterFreq === undefined) {
-      letterFreq = 0;
-    }
-    letterFreq += 1;
-    charFreqs.set(letter, letterFreq);
-  }
-
-  // sort them in an array
-  const charArray = new Array<Char>();
-  charFreqs.forEach((value, key) => {
-    let ch: Char = {
-      char: key,
-      count: value,
-    };
-    charArray.push(ch);
-  });
-  charArray.sort((a, b) => {
-    return a.count - b.count; // ascending order
-  });
-
-  // make an array of nodes
-  const nodeArray = new Array<TreeNode>();
-  charArray.forEach((ch) => {
-    // Create new treenode with count and char
-    let tempNode: Node = { char: ch.char, bits: '' };
-    let node = new TreeNode(tempNode, false, ch.count);
-    // node.left = root;
-    // node.right = root;
-    // append it to the nodeArray
-    nodeArray.push(node);
-  });
-
-  // build a tree from the nodes
-  const branchNode: Node = { char: null, bits: null };
-  while (nodeArray.length > 1) {
-    // I think this does it but I don't have a good way to display it
-    let tempCount = nodeArray[0].count + nodeArray[1].count;
-    let temp = new TreeNode(branchNode, true, tempCount);
-    temp.left = nodeArray[0];
-    temp.right = nodeArray[1];
-    nodeArray.splice(0, 2); // Remove first 2 nodes from array
-    let index = nodeArray.findIndex((element) => {
-      return element.count >= tempCount;
-    });
-    nodeArray.splice(index, 0, temp); // Add temp node to start of array
-  }
-
-  return nodeArray[0];
-}
-
 interface TreeProps {
   treeData: TreeNode | undefined;
   hsbData: HSBData;
@@ -142,7 +81,9 @@ function Tree(props: TreeProps) {
 
     const g = svg
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      .attr('viewBox', '0 0 1300 3000')
+      .classed('svg-content-responsive', true);
 
     svg.call(
       d3.zoom<SVGSVGElement, unknown>().on('zoom', (e) => {
@@ -158,7 +99,7 @@ function Tree(props: TreeProps) {
       .append('path')
       .attr('class', 'link')
       .attr('d', (d) => {
-        if (d.parent === null)
+        if (d.parent === null || d.parent.data.isInvisible)
           return ''; // should be unreachable since we do the slice, but just in case
         else return `M${d.x},${d.y} ${d.parent.x},${d.parent.y}`;
       });
@@ -169,6 +110,9 @@ function Tree(props: TreeProps) {
       .data(nodes.descendants())
       .enter()
       .append('g')
+      .attr('opacity', (d) => {
+        return d.data.isInvisible ? 0 : 1;
+      })
       .attr(
         'class',
         (d) => 'node' + (d.children ? ' node--internal' : ' node--leaf'),
@@ -182,6 +126,9 @@ function Tree(props: TreeProps) {
       .attr('y', -20)
       .attr('width', 40)
       .attr('height', 40)
+      .attr('opacity', (d) => {
+        return d.data.isInvisible ? 0 : 1;
+      })
       .attr('data-char', (d) =>
         d.data.value.char === null
           ? null
@@ -194,6 +141,9 @@ function Tree(props: TreeProps) {
       .attr('dy', '.35em')
       .attr('x', '-0')
       .attr('y', '10')
+      .attr('opacity', (d) => {
+        return d.data.isInvisible ? 0 : 1;
+      })
       .text((d) => {
         switch (d.data.value.char) {
           case ' ':
@@ -210,6 +160,9 @@ function Tree(props: TreeProps) {
       .attr('dy', '.35em')
       .attr('x', '-0')
       .attr('y', '-10')
+      .attr('opacity', (d) => {
+        return d.data.isInvisible ? 0 : 1;
+      })
       .text((d) => {
         return d.data.count;
       });
@@ -231,12 +184,25 @@ const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
   if (displayText === undefined) {
     return <></>;
   }
-  // const [tree, setTree] = useState<TreeNode>(() => createTree(displayText));
 
-  // useEffect(() => {
-  //   setTree(createTree(displayText));
-  // }, [displayText]);
-  return <Tree treeData={tree} hsbData={hsbData} />;
+  const [treeRoot, setTreeRoot] = useState<TreeNode | undefined>();
+
+  useEffect(() => {
+    setTreeRoot(undefined);
+    if (tree.length > 1) {
+      const branchNode: Node = { char: null, bits: null };
+      let invisibleRoot = new TreeNode(branchNode, true, 0);
+      tree.forEach((t) => {
+        if (t !== undefined) invisibleRoot.descendants.push(t);
+      });
+      setTreeRoot(invisibleRoot);
+    } else {
+      if (tree !== undefined) setTreeRoot(tree[0]);
+    }
+    console.log(treeRoot);
+  }, [tree, displayText]);
+
+  return <Tree treeData={treeRoot} hsbData={hsbData} />;
 };
 
 export default TreePanel;
