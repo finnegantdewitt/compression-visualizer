@@ -11,56 +11,7 @@ import {
   to_domstr_representation,
 } from './HoverStyleBodge';
 
-const LEFT = 0;
-const RIGHT = 1;
-
-interface LeafNode {
-  char: string;
-  bits: string;
-}
-interface BranchNode {
-  char: null;
-  bits: null;
-}
-type Node = LeafNode | BranchNode;
-
-class TreeNode {
-  value: Node;
-  descendants: Array<TreeNode>;
-  isBranch: boolean;
-  parent?: TreeNode; // if undefined, root
-  count: number; // Frequency of node
-
-  constructor(value: Node, isBranch: boolean, count: number) {
-    this.value = value;
-    this.descendants = [];
-    this.isBranch = isBranch;
-    this.parent = undefined;
-    this.count = count;
-  }
-
-  get left() {
-    return this.descendants[LEFT];
-  }
-
-  set left(node: TreeNode) {
-    this.descendants[LEFT] = node;
-    if (node) {
-      node.parent = this;
-    }
-  }
-
-  get right() {
-    return this.descendants[RIGHT];
-  }
-
-  set right(node: TreeNode) {
-    this.descendants[RIGHT] = node;
-    if (node) {
-      node.parent = this;
-    }
-  }
-}
+import { TreeNode, Node } from '../classes/TreeNode';
 
 interface Char {
   char: string;
@@ -95,7 +46,6 @@ function createTree(text: string) {
 
   // make an array of nodes
   const nodeArray = new Array<TreeNode>();
-  const branchNode: Node = { char: null, bits: null };
   charArray.forEach((ch) => {
     // Create new treenode with count and char
     let tempNode: Node = { char: ch.char, bits: '' };
@@ -107,6 +57,7 @@ function createTree(text: string) {
   });
 
   // build a tree from the nodes
+  const branchNode: Node = { char: null, bits: null };
   while (nodeArray.length > 1) {
     // I think this does it but I don't have a good way to display it
     let tempCount = nodeArray[0].count + nodeArray[1].count;
@@ -132,12 +83,10 @@ function Tree(props: TreeProps) {
   if (props.treeData === undefined) {
     return <></>;
   }
+  // console.log(props);
   const margin = { top: 50, right: 0, bottom: 30, left: 0 };
   const [width, setHeight] = useState<any>(750 - margin.top - margin.bottom);
   const [height, setWidth] = useState<any>(600 - margin.left - margin.right);
-  // set the dimensions and margins of the diagram
-  // setHeight(750 - margin.top - margin.bottom);
-  // setWidth(600 - margin.left - margin.right);
 
   const [pageHeight, setPageHeight] = useState<number | undefined>(0);
   const [pageWidth, setPageWidth] = useState<number | undefined>(0);
@@ -152,8 +101,8 @@ function Tree(props: TreeProps) {
     ) {
       setHeight(pageHeight - margin.top - margin.bottom);
       setWidth(pageWidth - margin.left - margin.right);
-      console.log('Page Height: %d', pageHeight);
-      console.log('Page Width: %d', pageWidth);
+      // console.log('Page Height: %d', pageHeight);
+      // console.log('Page Width: %d', pageWidth);
     }
   });
   // console.log('Page Height: %d', pageHeight);
@@ -227,8 +176,11 @@ function Tree(props: TreeProps) {
 
     // adds the circle to the node
     node
-      .append('circle')
-      .attr('r', nodeRadius)
+      .append('rect')
+      .attr('x', -20)
+      .attr('y', -20)
+      .attr('width', 40)
+      .attr('height', 40)
       .attr('data-char', (d) =>
         d.data.value.char === null
           ? null
@@ -240,7 +192,7 @@ function Tree(props: TreeProps) {
       .append('text')
       .attr('dy', '.35em')
       .attr('x', '-0')
-      .attr('y', '0')
+      .attr('y', '10')
       .text((d) => {
         switch (d.data.value.char) {
           case ' ':
@@ -250,6 +202,15 @@ function Tree(props: TreeProps) {
           default:
             return d.data.value.char;
         }
+      });
+    // adds the text to the node
+    node
+      .append('text')
+      .attr('dy', '.35em')
+      .attr('x', '-0')
+      .attr('y', '-10')
+      .text((d) => {
+        return d.data.count;
       });
   }, [props.treeData, width, height]);
 

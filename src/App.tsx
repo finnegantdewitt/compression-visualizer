@@ -8,6 +8,7 @@ import { CommonArgs } from './components/common';
 import { useHsbData } from './components/HoverStyleBodge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+import { TreeNode, Node } from './classes/TreeNode';
 
 function App() {
   const [sourceText, setSourceText] = useState(Simple);
@@ -25,9 +26,13 @@ function App() {
   const [isTextDisplayed, setIsTextDisplayed] = useState(false);
   const [isFreqTableDisplayed, setIsFreqTableDisplayed] = useState(false);
 
+  const [tree, setTree] = useState<TreeNode | undefined>(undefined);
+
   const commonArgs: CommonArgs = {
     displayText,
     setDisplayText,
+    tree,
+    setTree,
     hsbData,
     isFreqTableDisplayed,
   };

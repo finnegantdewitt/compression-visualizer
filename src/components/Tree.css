@@ -8,9 +8,9 @@
   stroke: black;
 }
 
-.Tree .node > circle {
+.Tree .node > rect {
   stroke: black;
-  fill: var(--hovered-bg, #D3D3D3);
+  fill: var(--hovered-bg, #d3d3d3);
 }
 
 .Tree .node > text {
