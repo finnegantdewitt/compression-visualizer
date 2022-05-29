@@ -50,7 +50,7 @@ export const HSBStyle: React.FC<{ data: HSBData }> = ({ data }) => {
     style += `[data-char="${data.char}"] { --hovered-bg: #E49273; }`;
   }
   if (data.strIdx !== null) {
-    style += `[data-stridx="${data.strIdx}"] { --hovered-bg: #A37A74; }`;
+    style += `[data-stridx="${data.strIdx}"] { --hovered-bg: #ff0000; }`;
   }
   return <style>{style}</style>;
 };

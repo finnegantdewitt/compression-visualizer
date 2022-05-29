@@ -1,4 +1,5 @@
 import React from 'react';
+import { CompressedHuffmanData, TreeNode } from '../Huffman';
 import { HSBData } from './HoverStyleBodge';
 
 export type CommonArgs = {
@@ -6,4 +7,6 @@ export type CommonArgs = {
   readonly setDisplayText: React.Dispatch<React.SetStateAction<string>>;
   readonly hsbData: HSBData;
   readonly isFreqTableDisplayed: boolean;
+  readonly tree: Readonly<TreeNode>;
+  readonly compressed: Readonly<CompressedHuffmanData>;
 };

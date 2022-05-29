@@ -1,0 +1,81 @@
+.CompressedBinaryPanel {
+  height: 100%;
+  overflow-y: scroll;
+  font-family: monospace;
+  cursor: default;
+  display: flex;
+  align-content: flex-start;
+  flex-wrap: wrap;
+}
+.CompressedBinaryPanel > div {
+  padding-top: .25ch;
+  padding-bottom: .25ch;
+  display: flex;
+  /* need to explicitly set width here since the divider lines within each byte cause slight variations in the width otherwise */
+  width: 4.5em;
+}
+.CompressedBinaryPanel > div > div:first-child {
+  padding-left: 0.5ch;
+}
+.CompressedBinaryPanel > div > div:last-child {
+  padding-right: 0.5ch;
+}
+.CompressedBinaryPanel > div > div {
+  background-color: var(--hovered-bg, transparent);
+  border-style: solid;
+  --entry-border-size: 1px;
+  border-color: #ababab;
+  --crossbyte-side-top:    0;
+  --crossbyte-side-bottom: 0;
+  --crossbyte-side-left:   0;
+  --crossbyte-side-right:  0;
+  border-top-width:    calc(var(--crossbyte-side-top)    * var(--entry-border-size));
+  border-bottom-width: calc(var(--crossbyte-side-bottom) * var(--entry-border-size));
+  border-left-width:   calc(var(--crossbyte-side-left)   * var(--entry-border-size));
+  border-right-width:  calc(var(--crossbyte-side-right)  * var(--entry-border-size));
+  --cb-pad-top:    calc(calc(1 - var(--crossbyte-side-top))    * var(--entry-border-size));
+  --cb-pad-bottom: calc(calc(1 - var(--crossbyte-side-bottom)) * var(--entry-border-size));
+  --cb-pad-left:   calc(calc(1 - var(--crossbyte-side-left))   * var(--entry-border-size));
+  --cb-pad-right:  calc(calc(1 - var(--crossbyte-side-right))  * var(--entry-border-size));
+  padding-top:     var(--cb-pad-top);
+  padding-bottom:  var(--cb-pad-bottom);
+  padding-left:    var(--cb-pad-left);
+  padding-right:   var(--cb-pad-right);
+}
+.CompressedBinaryPanel > div > div:first-child.first,
+.CompressedBinaryPanel > div > div:first-child.single {
+  /* border-color: lime; */
+  margin-left: 0.5ch;
+  padding-left: var(--cb-pad-left);
+}
+.CompressedBinaryPanel > div > div:last-child.last,
+.CompressedBinaryPanel > div > div:last-child.single {
+  margin-right: 0.5ch;
+  padding-right: var(--cb-pad-right);
+}
+
+.CompressedBinaryPanel > div > div.first  {
+  /* --crossbyte-side-top:    1; */
+  /* --crossbyte-side-bottom: 1; */
+  --crossbyte-side-left:   1;
+  --crossbyte-side-right:  0;
+}
+.CompressedBinaryPanel > div > div.last {
+  /* --crossbyte-side-top:    1;
+  --crossbyte-side-bottom: 1; */
+  --crossbyte-side-left:   0;
+  --crossbyte-side-right:  1;
+}
+.CompressedBinaryPanel > div > div.mid {
+  /* --crossbyte-side-top:    1;
+  --crossbyte-side-bottom: 1; */
+  --crossbyte-side-left:   0;
+  --crossbyte-side-right:  0;
+}
+.CompressedBinaryPanel > div > div.single {
+  /* --crossbyte-side-top:    1;
+  --crossbyte-side-bottom: 1; */
+  --crossbyte-side-left:   1;
+  --crossbyte-side-right:  1;
+}
+

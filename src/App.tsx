@@ -8,11 +8,12 @@ import { CommonArgs } from './components/common';
 import { useHsbData } from './components/HoverStyleBodge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+import { useHuffmanCompressedData, useHuffmanTree } from './Huffman';
 
 function App() {
   const [sourceText, setSourceText] = useState(Simple);
   const [displayText, setDisplayText] = useState<string>('');
-  const [treeText, setTreeText] = useState<string>('');
+  // const [treeText, setTreeText] = useState<string>('');  // FIXME: is this unnecessary? or do we need to differentiate between tree vs display
   const hsbData = useHsbData();
 
   // animation variables
@@ -25,11 +26,17 @@ function App() {
   const [isTextDisplayed, setIsTextDisplayed] = useState(false);
   const [isFreqTableDisplayed, setIsFreqTableDisplayed] = useState(false);
 
+  // huffman stuff
+  const tree = useHuffmanTree(displayText);
+  const compressed = useHuffmanCompressedData(displayText, tree);
+
   const commonArgs: CommonArgs = {
     displayText,
     setDisplayText,
     hsbData,
     isFreqTableDisplayed,
+    tree,
+    compressed,
   };
 
   // display text anim

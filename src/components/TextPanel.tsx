@@ -125,7 +125,6 @@ export const StepsPanel: React.FC<CommonArgs> = ({
   isFreqTableDisplayed,
 }) => {
   // count the freqs of chars with a hashmaps
-  console.log(displayText);
   const charFreqs = new Map<string, number>();
   for (let i = 0; i < displayText.length; i++) {
     let letter = displayText[i];
