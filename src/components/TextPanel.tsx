@@ -127,6 +127,7 @@ export const StepsPanel: React.FC<CommonArgs> = ({
   tree,
   setTree,
 }) => {
+  // should always be sorted in ascending order
   const [nodeArray, setNodeArray] = useState<Array<TreeNode>>([]);
 
   useEffect(() => {
@@ -167,18 +168,15 @@ export const StepsPanel: React.FC<CommonArgs> = ({
 
   const push = () => {
     let tempNode: Node = { char: null, bits: null };
-    let node = new TreeNode(tempNode, false, 7);
-    let insertAt = -1;
+    let node = new TreeNode(tempNode, false, 10);
 
-    // using .every so I can break out of loop
-    nodeArray.every((tNode, idx) => {
-      if (node.count < tNode.count) {
-        insertAt = idx;
-        return false;
-      } else {
-        return true;
-      }
+    // finds the index to insert node at
+    let insertAt = nodeArray.findIndex((element) => {
+      return element.count >= node.count;
     });
+
+    // inserts the node at insertAt,
+    // or appends if it didn't find one
     if (insertAt !== -1) {
       setNodeArray((prevNodes) => [
         ...prevNodes.slice(0, insertAt),
@@ -188,11 +186,32 @@ export const StepsPanel: React.FC<CommonArgs> = ({
     } else {
       setNodeArray((prevNodes) => [...prevNodes, node]);
     }
-    // const sorted = [...nodeArray].sort((a, b) => {
-    //   return a.count - b.count;
-    // });
-    // setNodeArray(sorted);
-    // console.log(nodeArray);
+  };
+
+  const build = () => {
+    const branchNode: Node = { char: null, bits: null };
+    if (nodeArray.length > 1) {
+      let tempCount = nodeArray[0].count + nodeArray[1].count;
+      let temp = new TreeNode(branchNode, true, tempCount);
+      temp.left = nodeArray[0];
+      temp.right = nodeArray[1];
+      setNodeArray((existingNodes) => {
+        return existingNodes.slice(2);
+      });
+      let insertAt = nodeArray.findIndex((element) => {
+        return element.count >= tempCount;
+      });
+      if (insertAt !== -1) {
+        setNodeArray((prevNodes) => [
+          ...prevNodes.slice(0, insertAt),
+          temp,
+          ...prevNodes.slice(insertAt),
+        ]);
+      } else {
+        setNodeArray((prevNodes) => [...prevNodes, temp]);
+      }
+      setTree(temp);
+    }
   };
 
   return (
@@ -202,15 +221,16 @@ export const StepsPanel: React.FC<CommonArgs> = ({
           <li>Read the text</li>
           <li>
             Count the frequency of each letter{' '}
-            <button onClick={() => push()}>count</button>
+            <button onClick={() => push()}>debug push</button>
           </li>
           <li>
-            Build the tree <button>Build</button>
+            Build the tree <button onClick={() => build()}>Build</button>
           </li>
           <ol>
             <li>Take the two lowest frequency nodes</li>
             <li>
-              Connect them to a new node with the sum of their frequencies
+              Connect them to a new intermediate node (inter) with the sum of
+              their frequencies
             </li>
           </ol>
         </ol>

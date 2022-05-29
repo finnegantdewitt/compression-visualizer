@@ -75,7 +75,7 @@ function createTree(text: string) {
 }
 
 interface TreeProps {
-  treeData: TreeNode;
+  treeData: TreeNode | undefined;
   hsbData: HSBData;
 }
 
@@ -84,7 +84,7 @@ function Tree(props: TreeProps) {
     return <></>;
   }
   // console.log(props);
-  const margin = { top: 50, right: 0, bottom: 30, left: 0 };
+  const margin = { top: 50, right: 0, bottom: 30, left: 100 };
   const [width, setHeight] = useState<any>(750 - margin.top - margin.bottom);
   const [height, setWidth] = useState<any>(600 - margin.left - margin.right);
 
@@ -101,6 +101,7 @@ function Tree(props: TreeProps) {
     ) {
       setHeight(pageHeight - margin.top - margin.bottom);
       setWidth(pageWidth - margin.left - margin.right);
+      margin.left = pageWidth / 2;
       // console.log('Page Height: %d', pageHeight);
       // console.log('Page Width: %d', pageWidth);
     }
@@ -108,13 +109,13 @@ function Tree(props: TreeProps) {
   // console.log('Page Height: %d', pageHeight);
   // console.log('Page Width: %d', pageWidth);
 
-  const nodeRadius = 15;
-
   // Declares a tree layout and assigns the size
   const treemap = d3
     .tree<TreeNode>()
-    .nodeSize([nodeRadius * 3, nodeRadius * 3])
-    .size([height, width]);
+    .nodeSize([40, 40])
+    .separation((a, b) => {
+      return a.parent === b.parent ? 3 : 4;
+    });
 
   //  assigns the data to a hierarchy using parent-child relationships
   const nodes_hierarchy: d3.HierarchyNode<TreeNode> = d3.hierarchy(
@@ -226,15 +227,15 @@ function Tree(props: TreeProps) {
   );
 }
 
-const TreePanel: React.FC<CommonArgs> = ({ displayText, hsbData }) => {
+const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
   if (displayText === undefined) {
     return <></>;
   }
-  const [tree, setTree] = useState<TreeNode>(() => createTree(displayText));
+  // const [tree, setTree] = useState<TreeNode>(() => createTree(displayText));
 
-  useEffect(() => {
-    setTree(createTree(displayText));
-  }, [displayText]);
+  // useEffect(() => {
+  //   setTree(createTree(displayText));
+  // }, [displayText]);
   return <Tree treeData={tree} hsbData={hsbData} />;
 };
 
