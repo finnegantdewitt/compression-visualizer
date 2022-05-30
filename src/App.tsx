@@ -33,8 +33,9 @@ function App() {
   const [tree, setTree] = useState<Array<TreeNode | undefined>>([]);
 
   // huffman stuff
-  const huffTree = useHuffmanTree(displayText);
-  const compressed = useHuffmanCompressedData(displayText, huffTree);
+  // const huffTree = useHuffmanTree(displayText);
+  // const compressed = useHuffmanCompressedData(displayText, huffTree);
+  const compressed = undefined;
 
   const commonArgs: CommonArgs = {
     displayText,
@@ -43,8 +44,6 @@ function App() {
     setTree,
     hsbData,
     isFreqTableDisplayed,
-
-    huffTree,
     compressed,
   };
 
@@ -73,16 +72,6 @@ function App() {
     setTree([]);
     setIsTextDisplayed(false);
   }
-
-  // anim tree
-  // useEffect(() => {
-  //   if (clock !== -1 && play) {
-  //     const interval = setInterval(() => {
-  //       onClock();
-  //     }, 500);
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [clock, play, displayText]);
 
   // function onClock() {}
 

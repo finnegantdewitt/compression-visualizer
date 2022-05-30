@@ -12,16 +12,25 @@ type PanelType =
   | 'Text'
   | 'Hex'
   | 'Tree'
-  | 'Binary'
+  | 'SourceBinary'
   | 'Steps'
   | 'CompressedBinary';
 const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
   Text: TextPanel,
   Steps: StepsPanel,
   Hex: HexPanel,
-  Binary: BinaryPanel,
+  SourceBinary: BinaryPanel,
   Tree: TreePanel,
   CompressedBinary: CompressedBinaryPanel,
+};
+
+const TITLE_MAP: Record<PanelType, string> = {
+  Text: 'Source Text',
+  Steps: 'Steps',
+  Hex: 'Hex',
+  SourceBinary: 'Source Binary',
+  Tree: 'Huffman Tree',
+  CompressedBinary: 'Compressed Binary',
 };
 
 // TODO: should rename `LyricSplit` to something more accurate
@@ -38,7 +47,7 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
       direction: 'column',
       first: {
         direction: 'row',
-        first: 'Binary',
+        first: 'SourceBinary',
         second: 'CompressedBinary',
       },
       second: 'Tree',
@@ -52,7 +61,7 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
         className="mosaic-blueprint-theme bp4-dark"
         blueprintNamespace="bp4"
         renderTile={(id, path) => (
-          <MosaicWindow<PanelType> path={path} title={id}>
+          <MosaicWindow<PanelType> path={path} title={TITLE_MAP[id]}>
             {React.createElement(paneltypeComponentMap[id], params, null)}
           </MosaicWindow>
         )}

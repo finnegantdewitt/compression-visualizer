@@ -13,6 +13,5 @@ export type CommonArgs = {
   readonly hsbData: HSBData;
   readonly isFreqTableDisplayed: boolean;
 
-  readonly huffTree: Readonly<TreeNode>;
-  readonly compressed: Readonly<CompressedHuffmanData>;
+  readonly compressed: Readonly<CompressedHuffmanData | undefined>;
 };
