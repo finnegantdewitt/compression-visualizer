@@ -11,7 +11,8 @@ export type CommonArgs = {
     React.SetStateAction<Array<TreeNode | undefined>>
   >;
   readonly hsbData: HSBData;
-  readonly isFreqTableDisplayed: boolean;
-
   readonly compressed: Readonly<CompressedHuffmanData | undefined>;
+  readonly setCompressed: React.Dispatch<
+    React.SetStateAction<CompressedHuffmanData | undefined>
+  >;
 };

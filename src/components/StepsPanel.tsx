@@ -1,16 +1,24 @@
 import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
-import { CompressedHuffmanData, TreeNode, Node } from '../classes/Huffman';
+import {
+  CompressedHuffmanData,
+  useHuffmanCompressedData,
+  TreeNode,
+  Node,
+} from '../classes/Huffman';
 import { display_chars } from '../util/DisplayChars';
 import './StepsPanel.css';
-
 interface Char {
   char: string;
   count: number;
 }
 
-const StepsPanel: React.FC<CommonArgs> = ({ displayText, tree, setTree }) => {
+const StepsPanel: React.FC<CommonArgs> = ({
+  displayText,
+  setTree,
+  setCompressed,
+}) => {
   // should always be sorted in ascending order
   const [nodeArray, setNodeArray] = useState<Array<TreeNode>>([]);
 
@@ -49,6 +57,16 @@ const StepsPanel: React.FC<CommonArgs> = ({ displayText, tree, setTree }) => {
       setNodeArray((prevNodes) => [...prevNodes, node]);
     });
   }, [displayText]); // should only trigger when the display text changes
+
+  // if nodeArray is down to 1, display compressed binary
+  // BROKEN
+  useEffect(() => {
+    if (nodeArray.length === 1) {
+      console.log('hi');
+      const compressed = useHuffmanCompressedData(displayText, nodeArray[0]);
+      setCompressed(compressed);
+    }
+  }, [nodeArray]);
 
   const push = () => {
     let tempNode: Node = { char: null, bits: null };
@@ -129,19 +147,16 @@ const StepsPanel: React.FC<CommonArgs> = ({ displayText, tree, setTree }) => {
       </div>
       <div>
         <ol>
-          <li>Read the text</li>
           <li>
-            Count the frequency of each letter{' '}
-            {/* <button onClick={() => push()}>debug push</button> */}
+            Read the text
+            <button onClick={() => build()}>Read Text</button>
           </li>
           <li>
-            Build the tree{' '}
-            <button
-              style={{ float: 'right', marginRight: '1em' }}
-              onClick={() => build()}
-            >
-              Build
-            </button>
+            Count the frequency of each letter{' '}
+            <button onClick={() => build()}>Count Frequency</button>
+          </li>
+          <li>
+            Build the tree <button onClick={() => build()}>Build</button>
           </li>
           <ol>
             <li>Take the two lowest frequency nodes</li>

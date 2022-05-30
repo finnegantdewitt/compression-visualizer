@@ -197,7 +197,7 @@ const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
     } else {
       if (tree !== undefined) setTreeRoot(tree[0]);
     }
-    console.log(treeRoot);
+    // console.log(treeRoot);
   }, [tree, displayText]);
 
   return <Tree treeData={treeRoot} hsbData={hsbData} />;
