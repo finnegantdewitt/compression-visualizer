@@ -14,7 +14,6 @@ import {
   useHuffmanTree,
   useHuffmanCompressedData,
 } from './classes/Huffman';
-import { Node } from './classes/TreeNode';
 
 function App() {
   const [sourceText, setSourceText] = useState(Simple);

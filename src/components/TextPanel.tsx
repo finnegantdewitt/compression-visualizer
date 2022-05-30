@@ -2,8 +2,7 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import './TextPanel.css';
 import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
-import { CompressedHuffmanData, TreeNode } from '../classes/Huffman';
-import { Node } from '../classes/TreeNode';
+import { CompressedHuffmanData, TreeNode, Node } from '../classes/Huffman';
 
 const display_chars: Record<string, string> = {
   // https://www.compart.com/en/unicode/block/U+2400

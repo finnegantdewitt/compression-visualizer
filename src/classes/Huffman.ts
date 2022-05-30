@@ -12,7 +12,7 @@ interface BranchNode {
   char: null;
   bits: null;
 }
-type Node = LeafNode | BranchNode;
+export type Node = LeafNode | BranchNode;
 
 export class TreeNode {
   value: Node;

@@ -9,8 +9,7 @@ import {
   to_domstr_representation,
 } from './HoverStyleBodge';
 
-import { Node } from '../classes/TreeNode';
-import { TreeNode } from '../classes/Huffman';
+import { TreeNode, Node } from '../classes/Huffman';
 
 interface TreeProps {
   treeData: TreeNode | undefined;
