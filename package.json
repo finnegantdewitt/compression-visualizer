@@ -1,6 +1,7 @@
 {
   "name": "compression-visualizer",
   "version": "0.1.0",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "@blueprintjs/core": "^4.3.0",
