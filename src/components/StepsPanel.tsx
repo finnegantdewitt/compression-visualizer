@@ -168,6 +168,14 @@ const StepsPanel: React.FC<CommonArgs> = ({
     setCompBinValues([]);
     setCompressed(undefined);
   }
+  const loadSimple = () => {
+    reset();
+    setDisplayText(Simple);
+  };
+  const loadComplex = () => {
+    reset();
+    setDisplayText(Never_Gonna_Lyrics);
+  };
 
   return (
     <div className="StepsPanel">
@@ -178,10 +186,8 @@ const StepsPanel: React.FC<CommonArgs> = ({
         <ol>
           <li>
             Read the text
-            <button onClick={() => setDisplayText(Simple)}>Simple Text</button>
-            <button onClick={() => setDisplayText(Never_Gonna_Lyrics)}>
-              More Complex Text
-            </button>
+            <button onClick={() => loadSimple()}>Simple Text</button>
+            <button onClick={() => loadComplex()}>More Complex Text</button>
           </li>
           <li>
             Count the frequency of each letter{' '}
