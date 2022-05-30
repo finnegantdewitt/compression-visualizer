@@ -8,7 +8,13 @@ import { CommonArgs } from './components/common';
 import { useHsbData } from './components/HoverStyleBodge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
-import { useHuffmanCompressedData, useHuffmanTree } from './Huffman';
+import {
+  CompressedHuffmanData,
+  TreeNode,
+  useHuffmanTree,
+  useHuffmanCompressedData,
+} from './classes/Huffman';
+import { Node } from './classes/TreeNode';
 
 function App() {
   const [sourceText, setSourceText] = useState(Simple);
@@ -26,16 +32,21 @@ function App() {
   const [isTextDisplayed, setIsTextDisplayed] = useState(false);
   const [isFreqTableDisplayed, setIsFreqTableDisplayed] = useState(false);
 
+  const [tree, setTree] = useState<Array<TreeNode | undefined>>([]);
+
   // huffman stuff
-  const tree = useHuffmanTree(displayText);
-  const compressed = useHuffmanCompressedData(displayText, tree);
+  const huffTree = useHuffmanTree(displayText);
+  const compressed = useHuffmanCompressedData(displayText, huffTree);
 
   const commonArgs: CommonArgs = {
     displayText,
     setDisplayText,
+    tree,
+    setTree,
     hsbData,
     isFreqTableDisplayed,
-    tree,
+
+    huffTree,
     compressed,
   };
 
@@ -61,6 +72,7 @@ function App() {
 
   function clearDisplayText() {
     setDisplayText('');
+    setTree([]);
     setIsTextDisplayed(false);
   }
 

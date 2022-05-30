@@ -8,10 +8,12 @@ import {
   hsbMouseOverListener,
   to_domstr_representation,
 } from './HoverStyleBodge';
-import { TreeNode, createTree } from '../Huffman';
+
+import { Node } from '../classes/TreeNode';
+import { TreeNode } from '../classes/Huffman';
 
 interface TreeProps {
-  treeData: TreeNode;
+  treeData: TreeNode | undefined;
   hsbData: HSBData;
 }
 
@@ -19,12 +21,10 @@ function Tree(props: TreeProps) {
   if (props.treeData === undefined) {
     return <></>;
   }
-  const margin = { top: 50, right: 0, bottom: 30, left: 0 };
+  // console.log(props);
+  const margin = { top: 50, right: 0, bottom: 30, left: 100 };
   const [width, setHeight] = useState<any>(750 - margin.top - margin.bottom);
   const [height, setWidth] = useState<any>(600 - margin.left - margin.right);
-  // set the dimensions and margins of the diagram
-  // setHeight(750 - margin.top - margin.bottom);
-  // setWidth(600 - margin.left - margin.right);
 
   const [pageHeight, setPageHeight] = useState<number | undefined>(0);
   const [pageWidth, setPageWidth] = useState<number | undefined>(0);
@@ -39,6 +39,7 @@ function Tree(props: TreeProps) {
     ) {
       setHeight(pageHeight - margin.top - margin.bottom);
       setWidth(pageWidth - margin.left - margin.right);
+      margin.left = pageWidth / 2;
       // console.log('Page Height: %d', pageHeight);
       // console.log('Page Width: %d', pageWidth);
     }
@@ -46,18 +47,18 @@ function Tree(props: TreeProps) {
   // console.log('Page Height: %d', pageHeight);
   // console.log('Page Width: %d', pageWidth);
 
-  const nodeRadius = 15;
-
   // Declares a tree layout and assigns the size
   const treemap = d3
     .tree<TreeNode>()
-    .nodeSize([nodeRadius * 3, nodeRadius * 3])
-    .size([height, width]);
+    .nodeSize([40, 40])
+    .separation((a, b) => {
+      return a.parent === b.parent ? 3 : 4;
+    });
 
   //  assigns the data to a hierarchy using parent-child relationships
   const nodes_hierarchy: d3.HierarchyNode<TreeNode> = d3.hierarchy(
     props.treeData,
-    (d) => d.descendants(),
+    (d) => d.descendants,
   );
 
   // maps the node data to the tree layout
@@ -79,7 +80,9 @@ function Tree(props: TreeProps) {
 
     const g = svg
       .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      .attr('viewBox', '0 0 1300 3000')
+      .classed('svg-content-responsive', true);
 
     svg.call(
       d3.zoom<SVGSVGElement, unknown>().on('zoom', (e) => {
@@ -95,7 +98,7 @@ function Tree(props: TreeProps) {
       .append('path')
       .attr('class', 'link')
       .attr('d', (d) => {
-        if (d.parent === null)
+        if (d.parent === null || d.parent.data.isInvisible)
           return ''; // should be unreachable since we do the slice, but just in case
         else return `M${d.x},${d.y} ${d.parent.x},${d.parent.y}`;
       });
@@ -106,6 +109,9 @@ function Tree(props: TreeProps) {
       .data(nodes.descendants())
       .enter()
       .append('g')
+      .attr('opacity', (d) => {
+        return d.data.isInvisible ? 0 : 1;
+      })
       .attr(
         'class',
         (d) => 'node' + (d.children ? ' node--internal' : ' node--leaf'),
@@ -114,8 +120,14 @@ function Tree(props: TreeProps) {
 
     // adds the circle to the node
     node
-      .append('circle')
-      .attr('r', nodeRadius)
+      .append('rect')
+      .attr('x', -20)
+      .attr('y', -20)
+      .attr('width', 40)
+      .attr('height', 40)
+      .attr('opacity', (d) => {
+        return d.data.isInvisible ? 0 : 1;
+      })
       .attr('data-char', (d) =>
         d.data.value.char === null
           ? null
@@ -127,7 +139,10 @@ function Tree(props: TreeProps) {
       .append('text')
       .attr('dy', '.35em')
       .attr('x', '-0')
-      .attr('y', '0')
+      .attr('y', '10')
+      .attr('opacity', (d) => {
+        return d.data.isInvisible ? 0 : 1;
+      })
       .text((d) => {
         switch (d.data.value.char) {
           case ' ':
@@ -137,6 +152,18 @@ function Tree(props: TreeProps) {
           default:
             return d.data.value.char;
         }
+      });
+    // adds the text to the node
+    node
+      .append('text')
+      .attr('dy', '.35em')
+      .attr('x', '-0')
+      .attr('y', '-10')
+      .attr('opacity', (d) => {
+        return d.data.isInvisible ? 0 : 1;
+      })
+      .text((d) => {
+        return d.data.count;
       });
   }, [props.treeData, width, height]);
 
@@ -152,11 +179,29 @@ function Tree(props: TreeProps) {
   );
 }
 
-const TreePanel: React.FC<CommonArgs> = ({ displayText, hsbData, tree }) => {
+const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
   if (displayText === undefined) {
     return <></>;
   }
-  return <Tree treeData={tree} hsbData={hsbData} />;
+
+  const [treeRoot, setTreeRoot] = useState<TreeNode | undefined>();
+
+  useEffect(() => {
+    setTreeRoot(undefined);
+    if (tree.length > 1) {
+      const branchNode: Node = { char: null, bits: null };
+      let invisibleRoot = new TreeNode(branchNode, true, 0);
+      tree.forEach((t) => {
+        if (t !== undefined) invisibleRoot.descendants.push(t);
+      });
+      setTreeRoot(invisibleRoot);
+    } else {
+      if (tree !== undefined) setTreeRoot(tree[0]);
+    }
+    console.log(treeRoot);
+  }, [tree, displayText]);
+
+  return <Tree treeData={treeRoot} hsbData={hsbData} />;
 };
 
 export default TreePanel;

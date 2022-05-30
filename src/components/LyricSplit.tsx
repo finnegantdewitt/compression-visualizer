@@ -7,7 +7,13 @@ import { CommonArgs } from './common';
 import TreePanel from './TreePanel';
 import CompressedBinaryPanel from './CompressedBinaryPanel';
 
-type PanelType = 'Text' | 'Hex' | 'Tree' | 'Binary' | 'Steps' | 'CompressedBinary';
+type PanelType =
+  | 'Text'
+  | 'Hex'
+  | 'Tree'
+  | 'Binary'
+  | 'Steps'
+  | 'CompressedBinary';
 const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
   Text: TextPanel,
   Steps: StepsPanel,
@@ -28,17 +34,13 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
       second: 'Steps',
     },
     second: {
-      direction: 'row',
+      direction: 'column',
       first: {
-        direction: 'column',
-        first: 'Hex',
-        second: 'Binary',
-      },
-      second: {
         direction: 'row',
-        first: 'Tree',
+        first: 'Binary',
         second: 'CompressedBinary',
       },
+      second: 'Tree',
     },
   });
   return (

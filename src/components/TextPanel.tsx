@@ -2,7 +2,8 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import './TextPanel.css';
 import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
-import { useTrail, a } from '@react-spring/web';
+import { CompressedHuffmanData, TreeNode } from '../classes/Huffman';
+import { Node } from '../classes/TreeNode';
 
 const display_chars: Record<string, string> = {
   // https://www.compart.com/en/unicode/block/U+2400
@@ -12,6 +13,7 @@ const display_chars: Record<string, string> = {
   '\u0003': '\u2403',
   '\u0004': '\u2404',
   '\u0005': '\u2405',
+
   '\u0006': '\u2406',
   '\u0007': '\u2407',
   '\u0008': '\u2408',
@@ -63,45 +65,6 @@ const TextPanelEntry = ({ char, idx }: { char: string; idx: number }) => {
   }
 };
 
-// const LetterRevealAmin: React.FC<{
-//   open: boolean;
-//   children: React.ReactNode;
-// }> = ({ open, children }) => {
-//   const items = React.Children.toArray(children);
-//   const trail = useTrail(items.length, {
-//     config: { mass: 1, tension: 20000, friction: 200 },
-//     opacity: open ? 1 : 0,
-//     from: { opacity: 0 },
-//   });
-//   return (
-//     <div className="TextPanel">
-//       {trail.map((style, index) => (
-//         <a.div key={index} style={style}>
-//           {items[index]}
-//         </a.div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
-//   const [children, setChildren] = useState<ReactElement[]>([]);
-//   const [open, set] = useState(true);
-//   useEffect(() => {
-//     setChildren(
-//       [...displayText].map((char, idx) => (
-//         <TextPanelEntry char={char} idx={idx} key={idx}></TextPanelEntry>
-//       )),
-//     );
-//   }, [displayText]);
-//   return (
-//     <div onClick={() => set((state) => !state)}>
-//       <LetterRevealAmin open={open}>{children}</LetterRevealAmin>
-//     </div>
-//   );
-// };
-// export default TextPanel;
-
 const TextPanel: React.FC<CommonArgs> = ({ displayText }) => {
   const [children, setChildren] = useState<ReactElement[]>([]);
   useEffect(() => {
@@ -122,56 +85,160 @@ interface Char {
 
 export const StepsPanel: React.FC<CommonArgs> = ({
   displayText,
-  isFreqTableDisplayed,
+  tree,
+  setTree,
 }) => {
-  // count the freqs of chars with a hashmaps
-  const charFreqs = new Map<string, number>();
-  for (let i = 0; i < displayText.length; i++) {
-    let letter = displayText[i];
-    let letterFreq = charFreqs.get(letter);
-    if (letterFreq === undefined) {
-      letterFreq = 0;
-    }
-    letterFreq += 1;
-    charFreqs.set(letter, letterFreq);
-  }
+  // should always be sorted in ascending order
+  const [nodeArray, setNodeArray] = useState<Array<TreeNode>>([]);
 
-  // sort them in an array
-  const charArray = new Array<Char>();
-  charFreqs.forEach((value, key) => {
-    let ch: Char = {
-      char: key,
-      count: value,
-    };
-    charArray.push(ch);
-  });
-  charArray.sort((a, b) => {
-    return a.count - b.count; // ascending order
-  });
+  useEffect(() => {
+    setNodeArray([]); // reset nodeArray for when text changes
+    //get the char frequencies
+    const charFreqs = new Map<string, number>();
+    for (let i = 0; i < displayText.length; i++) {
+      let letter = displayText[i];
+      let letterFreq = charFreqs.get(letter);
+      if (letterFreq === undefined) {
+        letterFreq = 0;
+      }
+      letterFreq += 1;
+      charFreqs.set(letter, letterFreq);
+    }
+
+    // sort them in an array (need to do this cause
+    // can't sort right after setState cause it's
+    // not set yet :|)
+    const charArray = new Array<Char>();
+    charFreqs.forEach((value, key) => {
+      let ch: Char = {
+        char: key,
+        count: value,
+      };
+      charArray.push(ch);
+    });
+    charArray.sort((a, b) => {
+      return a.count - b.count; // ascending order
+    });
+
+    charArray.forEach((ch) => {
+      let tempNode: Node = { char: ch.char, bits: '' };
+      let node = new TreeNode(tempNode, false, ch.count);
+      setNodeArray((prevNodes) => [...prevNodes, node]);
+    });
+  }, [displayText]); // should only trigger when the display text changes
+
+  const push = () => {
+    let tempNode: Node = { char: null, bits: null };
+    let node = new TreeNode(tempNode, false, 10);
+
+    // finds the index to insert node at
+    let insertAt = nodeArray.findIndex((element) => {
+      return element.count >= node.count;
+    });
+
+    // inserts the node at insertAt,
+    // or appends if it didn't find one
+    if (insertAt !== -1) {
+      setNodeArray((prevNodes) => [
+        ...prevNodes.slice(0, insertAt),
+        node,
+        ...prevNodes.slice(insertAt),
+      ]);
+    } else {
+      setNodeArray((prevNodes) => [...prevNodes, node]);
+    }
+  };
+
+  const build = () => {
+    const branchNode: Node = { char: null, bits: null };
+    if (nodeArray.length > 1) {
+      let tempCount = nodeArray[0].count + nodeArray[1].count;
+      let temp = new TreeNode(branchNode, false, tempCount);
+      temp.left = nodeArray[0];
+      temp.right = nodeArray[1];
+      let insertAt = nodeArray.findIndex((element) => {
+        return element.count > tempCount;
+      });
+      // I have to do all this messy setArray stuff in
+      // a single statement because otherwise it won't
+      // update before calling the next setArray.
+      // Everything done in here is assuming that the
+      // first two element we will remove are still in
+      // the array.
+      if (insertAt !== -1) {
+        // inserts temp at the insertAt
+        // then removes the first two elements
+        setNodeArray((prevNodes) => {
+          let inserted = [
+            ...prevNodes.slice(0, insertAt),
+            temp,
+            ...prevNodes.slice(insertAt),
+          ];
+          let firstTwoRemoved = inserted.slice(2);
+          return firstTwoRemoved;
+        });
+      } else {
+        // inserts temp at the end
+        // then removes the first two elements
+        setNodeArray((prevNodes) => {
+          let pushed = [...prevNodes, temp];
+          let firstTwoRemoved = pushed.slice(2);
+          return firstTwoRemoved;
+        });
+      }
+      setTree((prev) => {
+        let treeNodes = [];
+        prev.forEach((tNode) => {
+          if (tNode?.parent === undefined) {
+            treeNodes.push(tNode);
+          }
+        });
+        treeNodes.push(temp);
+        return treeNodes;
+      });
+    }
+  };
 
   return (
     <>
       <div>
         <ol>
           <li>Read the text</li>
-          <li>Count the frequency of each letter</li>
-          <li>Build the tree</li>
+          <li>
+            Count the frequency of each letter{' '}
+            {/* <button onClick={() => push()}>debug push</button> */}
+          </li>
+          <li>
+            Build the tree <button onClick={() => build()}>Build</button>
+          </li>
+          <ol>
+            <li>Take the two lowest frequency nodes</li>
+            <li>
+              Connect them to a new intermediate node (inter) with the sum of
+              their frequencies
+            </li>
+          </ol>
         </ol>
       </div>
       <div>
         <table>
           <thead>
             <tr>
-              <th>char</th>
+              <th>Node</th>
               <th>freq</th>
             </tr>
           </thead>
           <tbody>
-            {charArray.map((char, idx) => {
+            {nodeArray.map((treeNode, idx) => {
               return (
                 <tr key={idx}>
-                  <td>{display_chars[char.char] ?? char.char}</td>
-                  <td>{char.count}</td>
+                  <td>
+                    {treeNode.value.char !== null
+                      ? display_chars[treeNode.value.char] ??
+                        treeNode.value.char
+                      : 'inter'}
+                  </td>
+                  <td>{treeNode.count}</td>
                 </tr>
               );
             })}
