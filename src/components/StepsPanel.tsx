@@ -3,6 +3,7 @@ import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
 import { CompressedHuffmanData, TreeNode, Node } from '../classes/Huffman';
 import { display_chars } from '../util/DisplayChars';
+import './StepsPanel.css';
 
 interface Char {
   char: string;
@@ -122,7 +123,10 @@ const StepsPanel: React.FC<CommonArgs> = ({ displayText, tree, setTree }) => {
   };
 
   return (
-    <>
+    <div className="StepsPanel">
+      <div style={{ marginLeft: '1em', marginTop: '1em' }}>
+        <button>Reset</button>
+      </div>
       <div>
         <ol>
           <li>Read the text</li>
@@ -131,7 +135,13 @@ const StepsPanel: React.FC<CommonArgs> = ({ displayText, tree, setTree }) => {
             {/* <button onClick={() => push()}>debug push</button> */}
           </li>
           <li>
-            Build the tree <button onClick={() => build()}>Build</button>
+            Build the tree{' '}
+            <button
+              style={{ float: 'right', marginRight: '1em' }}
+              onClick={() => build()}
+            >
+              Build
+            </button>
           </li>
           <ol>
             <li>Take the two lowest frequency nodes</li>
@@ -142,32 +152,59 @@ const StepsPanel: React.FC<CommonArgs> = ({ displayText, tree, setTree }) => {
           </ol>
         </ol>
       </div>
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>Node</th>
-              <th>freq</th>
-            </tr>
-          </thead>
-          <tbody>
-            {nodeArray.map((treeNode, idx) => {
-              return (
-                <tr key={idx}>
-                  <td>
-                    {treeNode.value.char !== null
-                      ? display_chars[treeNode.value.char] ??
-                        treeNode.value.char
-                      : 'inter'}
-                  </td>
-                  <td>{treeNode.count}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="row">
+        <div className="column">
+          <table>
+            <thead>
+              <tr>
+                <th>Node</th>
+                <th>freq</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nodeArray.map((treeNode, idx) => {
+                return (
+                  <tr key={idx}>
+                    <td>
+                      {treeNode.value.char !== null
+                        ? display_chars[treeNode.value.char] ??
+                          treeNode.value.char
+                        : 'inter'}
+                    </td>
+                    <td>{treeNode.count}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="column">
+          <table>
+            <thead>
+              <tr>
+                <th>Node</th>
+                <th>freq</th>
+              </tr>
+            </thead>
+            <tbody>
+              {nodeArray.map((treeNode, idx) => {
+                return (
+                  <tr key={idx}>
+                    <td>
+                      {treeNode.value.char !== null
+                        ? display_chars[treeNode.value.char] ??
+                          treeNode.value.char
+                        : 'inter'}
+                    </td>
+                    <td>{treeNode.count}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

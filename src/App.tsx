@@ -22,7 +22,6 @@ function App() {
   const hsbData = useHsbData();
 
   // animation variables
-  const [clock, setClock] = useState(0);
   const [play, setPlay] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [animText, setAnimText] = useState(false);
