@@ -26,11 +26,11 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
       second: 'Steps',
     },
     second: {
-      direction: 'row',
+      direction: 'column',
       first: {
-        direction: 'column',
-        first: 'Hex',
-        second: 'Binary',
+        direction: 'row',
+        first: 'Binary',
+        second: 'Hex',
       },
       second: 'Tree',
     },
