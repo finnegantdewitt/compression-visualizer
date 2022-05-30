@@ -32,9 +32,17 @@ function GetFile({
       }
     };
     reader.readAsText(e.target.files![0]);
+    e.target.value = '';
   };
 
-  return <input type="file" accept=".txt" onChange={(e) => changeHandler(e)} />;
+  return (
+    <input
+      type="file"
+      accept=".txt"
+      style={{ color: 'transparent' }} // removes the "no file chosen" text
+      onChange={(e) => changeHandler(e)}
+    />
+  );
 }
 
 export default GetFile;
