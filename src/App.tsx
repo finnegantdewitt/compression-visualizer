@@ -8,7 +8,13 @@ import { CommonArgs } from './components/common';
 import { useHsbData } from './components/HoverStyleBodge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
-import { TreeNode, Node } from './classes/TreeNode';
+import {
+  CompressedHuffmanData,
+  TreeNode,
+  useHuffmanTree,
+  useHuffmanCompressedData,
+} from './classes/Huffman';
+import { Node } from './classes/TreeNode';
 
 function App() {
   const [sourceText, setSourceText] = useState(Simple);
@@ -28,6 +34,10 @@ function App() {
 
   const [tree, setTree] = useState<Array<TreeNode | undefined>>([]);
 
+  // huffman stuff
+  const huffTree = useHuffmanTree(displayText);
+  const compressed = useHuffmanCompressedData(displayText, huffTree);
+
   const commonArgs: CommonArgs = {
     displayText,
     setDisplayText,
@@ -35,6 +45,9 @@ function App() {
     setTree,
     hsbData,
     isFreqTableDisplayed,
+
+    huffTree,
+    compressed,
   };
 
   // display text anim

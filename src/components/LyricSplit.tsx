@@ -5,14 +5,22 @@ import { HexPanel, BinaryPanel } from './BytesPanel';
 import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import { CommonArgs } from './common';
 import TreePanel from './Tree';
+import CompressedBinaryPanel from './CompressedBinaryPanel';
 
-type PanelType = 'Text' | 'Hex' | 'Tree' | 'Binary' | 'Steps';
+type PanelType =
+  | 'Text'
+  | 'Hex'
+  | 'Tree'
+  | 'Binary'
+  | 'Steps'
+  | 'CompressedBinary';
 const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
   Text: TextPanel,
   Steps: StepsPanel,
   Hex: HexPanel,
   Binary: BinaryPanel,
   Tree: TreePanel,
+  CompressedBinary: CompressedBinaryPanel,
 };
 
 // TODO: should rename `LyricSplit` to something more accurate
@@ -30,7 +38,7 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
       first: {
         direction: 'row',
         first: 'Binary',
-        second: 'Hex',
+        second: 'CompressedBinary',
       },
       second: 'Tree',
     },
