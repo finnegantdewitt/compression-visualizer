@@ -1,17 +1,11 @@
 import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { CommonArgs } from './common';
-import { to_domstr_representation } from './HoverStyleBodge';
-import {
-  CompressedHuffmanData,
-  useHuffmanCompressedData,
-  genenrateCompressedData,
-  TreeNode,
-  Node,
-} from '../classes/Huffman';
+import { genenrateCompressedData, TreeNode, Node } from '../classes/Huffman';
 import { display_chars } from '../util/DisplayChars';
 import './StepsPanel.css';
 import Simple from '../text/Simple_Test_Text';
 import Never_Gonna_Lyrics from '../text/Never_Gonna';
+import GetFile from './showFile';
 interface Char {
   char: string;
   count: number;
@@ -180,7 +174,10 @@ const StepsPanel: React.FC<CommonArgs> = ({
   return (
     <div className="StepsPanel">
       <div style={{ marginLeft: '1em', marginTop: '1em' }}>
-        <button onClick={() => reset()}>Reset</button>
+        <button style={{ marginRight: '1em' }} onClick={() => reset()}>
+          Reset
+        </button>
+        <GetFile setDisplayText={setDisplayText} resetPage={reset} />
       </div>
       <div>
         <ol>
