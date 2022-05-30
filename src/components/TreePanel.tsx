@@ -17,13 +17,9 @@ interface TreeProps {
 }
 
 function Tree(props: TreeProps) {
-  if (props.treeData === undefined) {
-    return <></>;
-  }
-  // console.log(props);
   const margin = { top: 50, right: 0, bottom: 30, left: 100 };
-  const [width, setHeight] = useState<any>(750 - margin.top - margin.bottom);
-  const [height, setWidth] = useState<any>(600 - margin.left - margin.right);
+  const [width, setHeight] = useState<number>(750 - margin.top - margin.bottom);
+  const [height, setWidth] = useState<number>(600 - margin.left - margin.right);
 
   const [pageHeight, setPageHeight] = useState<number | undefined>(0);
   const [pageWidth, setPageWidth] = useState<number | undefined>(0);
@@ -43,25 +39,6 @@ function Tree(props: TreeProps) {
       // console.log('Page Width: %d', pageWidth);
     }
   });
-  // console.log('Page Height: %d', pageHeight);
-  // console.log('Page Width: %d', pageWidth);
-
-  // Declares a tree layout and assigns the size
-  const treemap = d3
-    .tree<TreeNode>()
-    .nodeSize([40, 40])
-    .separation((a, b) => {
-      return a.parent === b.parent ? 3 : 4;
-    });
-
-  //  assigns the data to a hierarchy using parent-child relationships
-  const nodes_hierarchy: d3.HierarchyNode<TreeNode> = d3.hierarchy(
-    props.treeData,
-    (d) => d.descendants,
-  );
-
-  // maps the node data to the tree layout
-  const nodes: d3.HierarchyPointNode<TreeNode> = treemap(nodes_hierarchy);
 
   const ref = useRef<SVGSVGElement>(null);
 
@@ -164,7 +141,33 @@ function Tree(props: TreeProps) {
       .text((d) => {
         return d.data.count;
       });
-  }, [props.treeData, width, height]);
+  }, [props.treeData, width, height, margin.left, margin.top]);
+
+
+  // ==== put all hook calls above this line ====
+
+  if (props.treeData === undefined) {
+    return <></>;
+  }
+  // console.log('Page Height: %d', pageHeight);
+  // console.log('Page Width: %d', pageWidth);
+
+  // Declares a tree layout and assigns the size
+  const treemap = d3
+    .tree<TreeNode>()
+    .nodeSize([40, 40])
+    .separation((a, b) => {
+      return a.parent === b.parent ? 3 : 4;
+    });
+
+  //  assigns the data to a hierarchy using parent-child relationships
+  const nodes_hierarchy: d3.HierarchyNode<TreeNode> = d3.hierarchy(
+    props.treeData,
+    (d) => d.descendants,
+  );
+
+  // maps the node data to the tree layout
+  const nodes: d3.HierarchyPointNode<TreeNode> = treemap(nodes_hierarchy);
 
   return (
     <>
@@ -179,10 +182,6 @@ function Tree(props: TreeProps) {
 }
 
 const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
-  if (displayText === undefined) {
-    return <></>;
-  }
-
   const [treeRoot, setTreeRoot] = useState<TreeNode | undefined>();
 
   useEffect(() => {
@@ -199,6 +198,10 @@ const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
     }
     // console.log(treeRoot);
   }, [tree, displayText]);
+
+  if (displayText === undefined) {
+    return <></>;
+  }
 
   return <Tree treeData={treeRoot} hsbData={hsbData} />;
 };

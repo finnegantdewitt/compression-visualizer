@@ -1,4 +1,4 @@
-export const display_chars: Record<string, string> = {
+export const display_chars: Partial<Record<string, string>> = {
   // https://www.compart.com/en/unicode/block/U+2400
   '\u0000': '\u2400',
   '\u0001': '\u2401',
