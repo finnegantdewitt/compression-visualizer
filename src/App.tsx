@@ -19,7 +19,7 @@ import { Node } from './classes/TreeNode';
 function App() {
   const [sourceText, setSourceText] = useState(Simple);
   const [displayText, setDisplayText] = useState<string>('');
-  const [treeText, setTreeText] = useState<string>('');
+  // const [treeText, setTreeText] = useState<string>('');  // FIXME: is this unnecessary? or do we need to differentiate between tree vs display
   const hsbData = useHsbData();
 
   // animation variables

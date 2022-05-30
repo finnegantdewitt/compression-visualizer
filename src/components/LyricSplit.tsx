@@ -4,7 +4,7 @@ import TextPanel, { StepsPanel } from './TextPanel';
 import { HexPanel, BinaryPanel } from './BytesPanel';
 import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import { CommonArgs } from './common';
-import TreePanel from './Tree';
+import TreePanel from './TreePanel';
 import CompressedBinaryPanel from './CompressedBinaryPanel';
 
 type PanelType =

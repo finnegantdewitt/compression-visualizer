@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
-import './Tree.css';
+import './TreePanel.css';
 import * as d3 from 'd3';
 import { CommonArgs } from './common';
-import { HierarchyPointNode } from 'd3';
-import { assert } from '../util';
 import {
   HSBData,
   hsbMouseOutListener,
