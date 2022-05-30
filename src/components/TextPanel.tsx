@@ -2,7 +2,6 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import './TextPanel.css';
 import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
-import { useTrail, a } from '@react-spring/web';
 import { TreeNode, Node } from '../classes/TreeNode';
 
 const display_chars: Record<string, string> = {
