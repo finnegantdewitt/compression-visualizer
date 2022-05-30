@@ -18,6 +18,8 @@ const CompressedBinaryPanel: React.FC<CommonArgs> = ({ compressed }) => {
           </div>
         )),
       );
+    } else {
+      setChildren([<></>]);
     }
   }, [compressed]);
   return <div className="BytesPanel">{children}</div>;

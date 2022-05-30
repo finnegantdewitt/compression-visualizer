@@ -132,7 +132,7 @@ export type CompressedHuffmanData = {
   bits: BitString;
 }[];
 
-function genenrateCompressedData(
+export function genenrateCompressedData(
   text: string,
   tree: TreeNode | undefined,
 ): CompressedHuffmanData {

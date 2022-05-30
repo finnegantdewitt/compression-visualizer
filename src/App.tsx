@@ -44,16 +44,6 @@ function App() {
 
   return (
     <div className="App">
-      <div>
-        <button onClick={() => setDisplayText(sourceText)}>
-          display_source
-        </button>
-        <button onClick={() => clearDisplayText()}>clear_display_text</button>
-        <button onClick={() => setSourceText(Simple)}>simple</button>
-        <button onClick={() => setSourceText(Never_Gonna_Lyrics)}>
-          Never_Gonna
-        </button>
-      </div>
       <GetFile setDisplayText={setDisplayText} />
       <LyricSplit {...commonArgs} />
     </div>

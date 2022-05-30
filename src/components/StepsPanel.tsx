@@ -4,25 +4,36 @@ import { to_domstr_representation } from './HoverStyleBodge';
 import {
   CompressedHuffmanData,
   useHuffmanCompressedData,
+  genenrateCompressedData,
   TreeNode,
   Node,
 } from '../classes/Huffman';
 import { display_chars } from '../util/DisplayChars';
 import './StepsPanel.css';
+import Simple from '../text/Simple_Test_Text';
+import Never_Gonna_Lyrics from '../text/Never_Gonna';
 interface Char {
   char: string;
   count: number;
+}
+interface BinaryRepresentation {
+  char: string;
+  bits: string | undefined;
 }
 
 const StepsPanel: React.FC<CommonArgs> = ({
   displayText,
   setTree,
   setCompressed,
+  setDisplayText,
 }) => {
   // should always be sorted in ascending order
   const [nodeArray, setNodeArray] = useState<Array<TreeNode>>([]);
+  const [CompBinValues, setCompBinValues] = useState<
+    Array<BinaryRepresentation>
+  >([]);
 
-  useEffect(() => {
+  const countFrequency = () => {
     setNodeArray([]); // reset nodeArray for when text changes
     //get the char frequencies
     const charFreqs = new Map<string, number>();
@@ -56,39 +67,14 @@ const StepsPanel: React.FC<CommonArgs> = ({
       let node = new TreeNode(tempNode, false, ch.count);
       setNodeArray((prevNodes) => [...prevNodes, node]);
     });
-  }, [displayText]); // should only trigger when the display text changes
+  };
 
   // if nodeArray is down to 1, display compressed binary
-  // BROKEN
-  useEffect(() => {
-    if (nodeArray.length === 1) {
-      console.log('hi');
-      const compressed = useHuffmanCompressedData(displayText, nodeArray[0]);
-      setCompressed(compressed);
-    }
-  }, [nodeArray]);
-
-  const push = () => {
-    let tempNode: Node = { char: null, bits: null };
-    let node = new TreeNode(tempNode, false, 10);
-
-    // finds the index to insert node at
-    let insertAt = nodeArray.findIndex((element) => {
-      return element.count >= node.count;
-    });
-
-    // inserts the node at insertAt,
-    // or appends if it didn't find one
-    if (insertAt !== -1) {
-      setNodeArray((prevNodes) => [
-        ...prevNodes.slice(0, insertAt),
-        node,
-        ...prevNodes.slice(insertAt),
-      ]);
-    } else {
-      setNodeArray((prevNodes) => [...prevNodes, node]);
-    }
-  };
+  //   useEffect(() => {
+  //     if (nodeArray.length === 1) {
+  //       setCompressed(genenrateCompressedData(displayText, nodeArray[0]));
+  //     }
+  //   }, [nodeArray]);
 
   const build = () => {
     const branchNode: Node = { char: null, bits: null };
@@ -140,23 +126,70 @@ const StepsPanel: React.FC<CommonArgs> = ({
     }
   };
 
+  type BitString = Readonly<(0 | 1)[]>;
+  const buildBinTable = () => {
+    if (nodeArray.length === 1) {
+      const lookupTable: Partial<Record<string, BitString>> = {};
+
+      // build the lookup table
+      (function r(node: TreeNode | undefined, bits: BitString) {
+        if (node === undefined) return;
+        if (node.value.char !== null) {
+          lookupTable[node.value.char] = bits;
+        }
+        r(node.left, [...bits, 0]);
+        r(node.right, [...bits, 1]);
+      })(nodeArray[0], []);
+
+      const binTableArray = [];
+      for (const char in lookupTable) {
+        // console.log(`${char}: ${lookupTable[char]}`);
+        let b: BinaryRepresentation = {
+          char: char,
+          bits: lookupTable[char]?.join(''), // prob won't ever be undef
+        };
+        binTableArray.push(b);
+      }
+      console.log(binTableArray);
+      setCompBinValues(binTableArray);
+    }
+  };
+
+  const viewCompressed = () => {
+    if (nodeArray.length === 1) {
+      setCompressed(genenrateCompressedData(displayText, nodeArray[0]));
+    }
+  };
+
+  function reset() {
+    setDisplayText('');
+    setTree([]);
+    setNodeArray([]);
+    setCompBinValues([]);
+    setCompressed(undefined);
+  }
+
   return (
     <div className="StepsPanel">
       <div style={{ marginLeft: '1em', marginTop: '1em' }}>
-        <button>Reset</button>
+        <button onClick={() => reset()}>Reset</button>
       </div>
       <div>
         <ol>
           <li>
             Read the text
-            <button onClick={() => build()}>Read Text</button>
+            <button onClick={() => setDisplayText(Simple)}>Simple Text</button>
+            <button onClick={() => setDisplayText(Never_Gonna_Lyrics)}>
+              More Complex Text
+            </button>
           </li>
           <li>
             Count the frequency of each letter{' '}
-            <button onClick={() => build()}>Count Frequency</button>
+            <button onClick={() => countFrequency()}>Count Frequency</button>
           </li>
           <li>
-            Build the tree <button onClick={() => build()}>Build</button>
+            Build the tree until one node remains
+            <button onClick={() => build()}>Build</button>
           </li>
           <ol>
             <li>Take the two lowest frequency nodes</li>
@@ -165,59 +198,73 @@ const StepsPanel: React.FC<CommonArgs> = ({
               their frequencies
             </li>
           </ol>
+          <li>
+            Traverse the tree to get the new binary representation of the chars
+            <button onClick={() => buildBinTable()}>Binary Table</button>
+          </li>
+          <ul>
+            <li>If left: append 0, if right: append 1</li>
+          </ul>
+          <li>
+            View Compressed file
+            <button onClick={() => viewCompressed()}>View Compressed</button>
+          </li>
         </ol>
       </div>
       <div className="row">
-        <div className="column">
-          <table>
-            <thead>
-              <tr>
-                <th>Node</th>
-                <th>freq</th>
-              </tr>
-            </thead>
-            <tbody>
-              {nodeArray.map((treeNode, idx) => {
-                return (
-                  <tr key={idx}>
-                    <td>
-                      {treeNode.value.char !== null
-                        ? display_chars[treeNode.value.char] ??
-                          treeNode.value.char
-                        : 'inter'}
-                    </td>
-                    <td>{treeNode.count}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <div className="column">
-          <table>
-            <thead>
-              <tr>
-                <th>Node</th>
-                <th>freq</th>
-              </tr>
-            </thead>
-            <tbody>
-              {nodeArray.map((treeNode, idx) => {
-                return (
-                  <tr key={idx}>
-                    <td>
-                      {treeNode.value.char !== null
-                        ? display_chars[treeNode.value.char] ??
-                          treeNode.value.char
-                        : 'inter'}
-                    </td>
-                    <td>{treeNode.count}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        {nodeArray.length > 0 ? (
+          <div className="column">
+            <table>
+              <thead>
+                <tr>
+                  <th>Node</th>
+                  <th>freq</th>
+                </tr>
+              </thead>
+              <tbody>
+                {nodeArray.map((treeNode, idx) => {
+                  return (
+                    <tr key={idx}>
+                      <td>
+                        {treeNode.value.char !== null
+                          ? display_chars[treeNode.value.char] ??
+                            treeNode.value.char
+                          : 'inter'}
+                      </td>
+                      <td>{treeNode.count}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <></>
+        )}
+        {CompBinValues && CompBinValues.length > 0 ? (
+          <div className="column">
+            <table>
+              <thead>
+                <tr>
+                  <th>Char</th>
+                  <th>BinValue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CompBinValues.map(({ char, bits }, idx) => {
+                  return (
+                    <tr key={idx}>
+                      <td>{display_chars[char] ?? char}</td>
+                      <td>{bits}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { HSBGlobalListener, HSBStyle } from './HoverStyleBodge';
 import TextPanel from './TextPanel';
 import StepsPanel from './StepsPanel';
@@ -24,15 +24,6 @@ const paneltypeComponentMap: { [K in PanelType]: React.FC<CommonArgs> } = {
   CompressedBinary: CompressedBinaryPanel,
 };
 
-const TITLE_MAP: Record<PanelType, string> = {
-  Text: 'Source Text',
-  Steps: 'Steps',
-  Hex: 'Hex',
-  SourceBinary: 'Source Binary',
-  Tree: 'Huffman Tree',
-  CompressedBinary: 'Compressed Binary',
-};
-
 // TODO: should rename `LyricSplit` to something more accurate
 const LyricSplit: React.FC<CommonArgs> = (params) => {
   const [mosaicValue, setMosaicValue] = useState<MosaicNode<PanelType> | null>({
@@ -53,6 +44,35 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
       second: 'Tree',
     },
   });
+
+  const [sourceBinarySize, setSourceBinarySize] = useState(0); // in bytes
+  const [compressedBinarySize, setCompressedBinarySize] = useState(0); // in bytes
+
+  useEffect(() => {
+    setSourceBinarySize(params.displayText.length);
+  }, [params.displayText]);
+
+  useEffect(() => {
+    if (params.compressed !== undefined) {
+      let length = 0;
+      params.compressed.forEach(({ char, bits, idx }) => {
+        length += bits.length;
+      });
+      setCompressedBinarySize(Math.ceil(length / 8));
+    } else {
+      setCompressedBinarySize(0);
+    }
+  }, [params.compressed]);
+
+  const TITLE_MAP: Record<PanelType, string> = {
+    Text: `Source Text`,
+    Steps: 'Steps',
+    Hex: 'Hex',
+    SourceBinary: `Source Binary: ${sourceBinarySize} bytes`,
+    Tree: 'Huffman Tree',
+    CompressedBinary: `Compressed Binary: ${compressedBinarySize} bytes`,
+  };
+
   return (
     <Fragment>
       <HSBStyle data={params.hsbData} />
