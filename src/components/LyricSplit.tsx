@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { HSBGlobalListener, HSBStyle } from './HoverStyleBodge';
-import TextPanel, { StepsPanel } from './TextPanel';
+import TextPanel from './TextPanel';
+import StepsPanel from './StepsPanel';
 import { HexPanel, BinaryPanel } from './BytesPanel';
 import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import { CommonArgs } from './common';
