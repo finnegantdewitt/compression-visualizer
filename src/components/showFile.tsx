@@ -3,9 +3,9 @@ import { assert } from '../util';
 
 // testing file input
 function GetFile({
-  setFileText,
+  setDisplayText,
 }: {
-  setFileText: React.Dispatch<React.SetStateAction<string>>;
+  setDisplayText: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [localFileText, setLocalFileText] = useState<
     string | ArrayBuffer | null
@@ -29,9 +29,12 @@ function GetFile({
       // was what we asked the browser for, which we don't, but typescript
       // doesn't know that in this situtation so we still need either a cast or
       // a condition to narrow the type
-      assert(!(localFileText instanceof ArrayBuffer), 'unreachable case - file input gave us an arraybuffer unexpectedly');
+      assert(
+        !(localFileText instanceof ArrayBuffer),
+        'unreachable case - file input gave us an arraybuffer unexpectedly',
+      );
       console.log(localFileText);
-      setFileText(localFileText);
+      setDisplayText(localFileText);
     }
   };
 

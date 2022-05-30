@@ -1,16 +1,17 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { assert } from '../util';
 import './BytesPanel.css';
 import { CommonArgs } from './common';
 import { to_domstr_representation } from './HoverStyleBodge';
 
 const BytesPanel =
   (displayFunc: (n: number) => string): React.FC<CommonArgs> =>
-  ({ fileText }) => {
+  ({ displayText }) => {
     const [children, setChildren] = useState<ReactElement[]>([]);
     useEffect(() => {
       let key = 0;
       setChildren(
-        [...fileText].flatMap((char, idx) =>
+        [...displayText].flatMap((char, idx) =>
           [...encoder.encode(char)].map((byte) => (
             <div
               data-char={to_domstr_representation(char)}
@@ -22,7 +23,7 @@ const BytesPanel =
           )),
         ),
       );
-    }, [fileText]);
+    }, [displayText]);
     const encoder = new TextEncoder();
     return <div className="BytesPanel">{children}</div>;
   };

@@ -19,37 +19,43 @@ export function useHsbData(): HSBData {
   return { strIdx, setStrIdx, char, setChar };
 }
 
-export const hsbMouseOverListener = ({setChar, setStrIdx}: HSBData) => (e: MouseEvent | React.MouseEvent) => {
-  if (!(e.target instanceof HTMLElement || e.target instanceof SVGElement)) return;
-  if ('char' in e.target.dataset || 'stridx' in e.target.dataset) {
-    setChar(e.target.dataset.char ?? null);
-    setStrIdx(
-      e.target.dataset.stridx === undefined
-        ? null
-        : parseInt(e.target.dataset.stridx),
-    );
-  }
-}
-export const hsbMouseOutListener = ({setChar, setStrIdx}: HSBData) => (e: MouseEvent | React.MouseEvent) => {
-  if (!(e.target instanceof HTMLElement || e.target instanceof SVGElement)) return;
-  if ('char' in e.target.dataset || 'stridx' in e.target.dataset) {
-    setChar(null);
-    setStrIdx(null);
-  }
-}
+export const hsbMouseOverListener =
+  ({ setChar, setStrIdx }: HSBData) =>
+  (e: MouseEvent | React.MouseEvent) => {
+    if (!(e.target instanceof HTMLElement || e.target instanceof SVGElement))
+      return;
+    if ('char' in e.target.dataset || 'stridx' in e.target.dataset) {
+      setChar(e.target.dataset.char ?? null);
+      setStrIdx(
+        e.target.dataset.stridx === undefined
+          ? null
+          : parseInt(e.target.dataset.stridx),
+      );
+    }
+  };
+export const hsbMouseOutListener =
+  ({ setChar, setStrIdx }: HSBData) =>
+  (e: MouseEvent | React.MouseEvent) => {
+    if (!(e.target instanceof HTMLElement || e.target instanceof SVGElement))
+      return;
+    if ('char' in e.target.dataset || 'stridx' in e.target.dataset) {
+      setChar(null);
+      setStrIdx(null);
+    }
+  };
 
-export const HSBStyle: React.FC<{data: HSBData}> = ({data}) => {
+export const HSBStyle: React.FC<{ data: HSBData }> = ({ data }) => {
   let style = '';
   if (data.char !== null) {
-    style += `[data-char="${data.char}"] { --hovered-bg: cyan; }`;
+    style += `[data-char="${data.char}"] { --hovered-bg: #E49273; }`;
   }
   if (data.strIdx !== null) {
-    style += `[data-stridx="${data.strIdx}"] { --hovered-bg: lime; }`;
+    style += `[data-stridx="${data.strIdx}"] { --hovered-bg: #ff0000; }`;
   }
   return <style>{style}</style>;
 };
 
-export const HSBGlobalListener: React.FC<{data: HSBData}> = ({data}) => {
+export const HSBGlobalListener: React.FC<{ data: HSBData }> = ({ data }) => {
   const rootRef = useRef(document.documentElement);
   useEventListener('mouseover', hsbMouseOverListener(data), rootRef);
   useEventListener('mouseout', hsbMouseOutListener(data), rootRef);
