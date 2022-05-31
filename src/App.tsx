@@ -13,15 +13,9 @@ import {
 } from './classes/Huffman';
 
 function App() {
-  const [sourceText, setSourceText] = useState(Simple);
-  const [displayText, setDisplayText] = useState<string>('');
   const hsbData = useHsbData();
-
+  const [displayText, setDisplayText] = useState<string>('');
   const [tree, setTree] = useState<Array<TreeNode | undefined>>([]);
-
-  // huffman stuff
-  // const huffTree = useHuffmanTree(displayText);
-  // const compressed = useHuffmanCompressedData(displayText, huffTree);
   const [compressed, setCompressed] = useState<
     CompressedHuffmanData | undefined
   >(undefined);
@@ -35,11 +29,6 @@ function App() {
     compressed,
     setCompressed,
   };
-
-  function clearDisplayText() {
-    setDisplayText('');
-    setTree([]);
-  }
 
   return (
     <div className="App">
