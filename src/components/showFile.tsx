@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { assert } from '../util';
 
+const hasNonAsciiCharacters = (str: string) => /[^\u0000-\u007f]/.test(str);
+
 // testing file input
 function GetFile({
   setDisplayText,
@@ -27,7 +29,9 @@ function GetFile({
           'unreachable case - file input gave us an arraybuffer unexpectedly',
         );
       }
-      if (text !== null) {
+      if (text !== null && hasNonAsciiCharacters(text)) {
+        alert('please select a file with only ascii characters (nice try)');
+      } else if (text !== null) {
         setDisplayText(text);
       }
     };
