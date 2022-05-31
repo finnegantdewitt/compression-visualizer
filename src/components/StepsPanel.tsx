@@ -18,6 +18,7 @@ interface BinaryRepresentation {
 const StepsPanel: React.FC<CommonArgs> = ({
   displayText,
   setTree,
+  tree,
   setCompressed,
   setDisplayText,
 }) => {
@@ -120,6 +121,33 @@ const StepsPanel: React.FC<CommonArgs> = ({
     }
   };
 
+  const buildAll = () => {
+    const branchNode: Node = { char: null, bits: null };
+    let tmpNodeArray = nodeArray;
+    while (tmpNodeArray.length > 1) {
+      let tempCount = tmpNodeArray[0].count + tmpNodeArray[1].count;
+      let temp = new TreeNode(branchNode, false, tempCount);
+      temp.left = tmpNodeArray[0];
+      temp.right = tmpNodeArray[1];
+      let insertAt = tmpNodeArray.findIndex((element) => {
+        return element.count > tempCount;
+      });
+      if (insertAt !== -1) {
+        tmpNodeArray = [
+          ...tmpNodeArray.slice(0, insertAt),
+          temp,
+          ...tmpNodeArray.slice(insertAt),
+        ];
+        tmpNodeArray = tmpNodeArray.slice(2);
+      } else {
+        tmpNodeArray.push(temp);
+        tmpNodeArray = tmpNodeArray.slice(2);
+      }
+    }
+    setNodeArray(tmpNodeArray);
+    setTree(tmpNodeArray);
+  };
+
   type BitString = Readonly<(0 | 1)[]>;
   const buildBinTable = () => {
     if (nodeArray.length === 1) {
@@ -193,6 +221,7 @@ const StepsPanel: React.FC<CommonArgs> = ({
           <li>
             Build the tree until one node remains
             <button onClick={() => build()}>Build</button>
+            <button onClick={() => buildAll()}>Build All</button>
           </li>
           <ol>
             <li>Take the two lowest frequency nodes</li>
