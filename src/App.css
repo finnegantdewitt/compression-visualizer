@@ -48,3 +48,12 @@
     transform: rotate(360deg);
   }
 }
+
+.FileSubmit {
+  font-family: 'Avenir';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  color: white;
+}
