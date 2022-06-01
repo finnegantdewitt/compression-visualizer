@@ -57,7 +57,6 @@ function Tree(props: TreeProps) {
     const g = svg
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-      .attr('viewBox', '0 0 1300 3000')
       .classed('svg-content-responsive', true);
 
     svg.call(
@@ -142,7 +141,6 @@ function Tree(props: TreeProps) {
         return d.data.count;
       });
   }, [props.treeData, width, height, margin.left, margin.top]);
-
 
   // ==== put all hook calls above this line ====
 

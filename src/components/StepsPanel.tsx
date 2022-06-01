@@ -29,7 +29,10 @@ const StepsPanel: React.FC<CommonArgs> = ({
   >([]);
 
   const countFrequency = () => {
-    setNodeArray([]); // reset nodeArray for when text changes
+    setTree([]);
+    setNodeArray([]);
+    setCompBinValues([]);
+    setCompressed(undefined);
     //get the char frequencies
     const charFreqs = new Map<string, number>();
     for (let i = 0; i < displayText.length; i++) {
