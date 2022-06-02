@@ -7,6 +7,17 @@ import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import { CommonArgs } from './common';
 import TreePanel from './TreePanel';
 import CompressedBinaryPanel from './CompressedBinaryPanel';
+import { CompressedHuffmanData } from '../classes/Huffman';
+
+// calculates the entropy of the binary in average bits per symbol
+const calcEntropy = (compHuffData: Readonly<CompressedHuffmanData>) => {
+  let entropy = 0.0;
+  compHuffData.forEach(({ char, idx, bits }) => {
+    entropy += bits.length;
+  });
+  entropy /= compHuffData.length;
+  return entropy;
+};
 
 type PanelType =
   | 'Text'
@@ -47,6 +58,7 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
 
   const [sourceBinarySize, setSourceBinarySize] = useState(0); // in bytes
   const [compressedBinarySize, setCompressedBinarySize] = useState(0); // in bytes
+  const [compressedBinaryEntropy, setCompressedBinaryEntropy] = useState(0.0); // in bytes
 
   useEffect(() => {
     setSourceBinarySize(params.displayText.length);
@@ -59,8 +71,10 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
         length += bits.length;
       });
       setCompressedBinarySize(Math.ceil(length / 8));
+      setCompressedBinaryEntropy(calcEntropy(params.compressed));
     } else {
       setCompressedBinarySize(0);
+      setCompressedBinaryEntropy(0.0);
     }
   }, [params.compressed]);
 
@@ -68,9 +82,11 @@ const LyricSplit: React.FC<CommonArgs> = (params) => {
     Text: `Source Text`,
     Steps: 'Steps',
     Hex: 'Hex',
-    SourceBinary: `Source Binary: ${sourceBinarySize} bytes`,
+    SourceBinary: `Source Binary: ${sourceBinarySize} bytes, 8 bits/symbol`,
     Tree: 'Huffman Tree',
-    CompressedBinary: `Compressed Binary: ${compressedBinarySize} bytes`,
+    CompressedBinary: `Compressed Binary: ${compressedBinarySize} bytes, ${compressedBinaryEntropy.toFixed(
+      4,
+    )} bits/symbol`,
   };
 
   return (
