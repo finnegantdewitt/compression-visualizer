@@ -6,6 +6,7 @@ import './StepsPanel.css';
 import Simple from '../text/Simple_Test_Text';
 import Never_Gonna_Lyrics from '../text/Never_Gonna';
 import GetFile from './showFile';
+import GithubLogo from '../assets/github-icon.svg';
 interface Char {
   char: string;
   count: number;
@@ -204,11 +205,24 @@ const StepsPanel: React.FC<CommonArgs> = ({
 
   return (
     <div className="StepsPanel">
-      <div style={{ marginLeft: '1em', marginTop: '1em' }}>
+      <div
+        style={{
+          marginLeft: '1em',
+          marginTop: '1em',
+          marginRight: '1em',
+          width: '100%',
+        }}
+      >
         <button style={{ marginRight: '1em' }} onClick={() => reset()}>
           Reset
         </button>
         <GetFile setDisplayText={setDisplayText} resetPage={reset} />
+        <a
+          href="https://github.com/finnegantdewitt/compression-visualizer"
+          target="_blank"
+        >
+          <img style={{ float: 'right' }} src={GithubLogo} />
+        </a>
       </div>
       <div>
         <ol>
