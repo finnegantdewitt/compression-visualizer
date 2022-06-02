@@ -221,7 +221,11 @@ const StepsPanel: React.FC<CommonArgs> = ({
           href="https://github.com/finnegantdewitt/compression-visualizer"
           target="_blank"
         >
-          <img style={{ float: 'right' }} src={GithubLogo} />
+          <img
+            style={{ float: 'right' }}
+            className="github-icon"
+            src={GithubLogo}
+          />
         </a>
       </div>
       <div>

@@ -1,6 +1,6 @@
 # Compression Visualizer! 🚀
 
-Finally and app that can visualize the Huffman Coding algorithm!
+Finally an app that can visualize the Huffman Coding algorithm!
 
 ## Available Scripts
 

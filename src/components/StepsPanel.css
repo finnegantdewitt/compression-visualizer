@@ -47,3 +47,9 @@ li > button::after {
 tr:nth-child(even) {
   background-color: #dddddd;
 } */
+
+/* color hack from https://stackoverflow.com/questions/22252472/how-to-change-the-color-of-an-svg-element */
+.github-icon {
+  filter: invert(49%) sepia(0%) saturate(0%) hue-rotate(32deg) brightness(98%)
+    contrast(95%);
+}
