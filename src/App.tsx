@@ -3,6 +3,7 @@ import './App.css';
 import LyricSplit from './components/LyricSplit';
 import Never_Gonna_Lyrics from './text/Never_Gonna';
 import Simple from './text/Simple_Test_Text';
+import * as d3 from 'd3';
 import { CommonArgs } from './components/common';
 import { useHsbData } from './components/HoverStyleBodge';
 import {
@@ -19,6 +20,9 @@ function App() {
   const [compressed, setCompressed] = useState<
     CompressedHuffmanData | undefined
   >(undefined);
+  const [previousTransform, setPreviousTransform] = useState<
+    d3.ZoomTransform | undefined
+  >(undefined);
 
   const commonArgs: CommonArgs = {
     displayText,
@@ -28,6 +32,8 @@ function App() {
     hsbData,
     compressed,
     setCompressed,
+    previousTransform,
+    setPreviousTransform,
   };
 
   return (

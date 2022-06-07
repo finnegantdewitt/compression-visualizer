@@ -6,6 +6,7 @@ import './StepsPanel.css';
 import Simple from '../text/Simple_Test_Text';
 import Never_Gonna_Lyrics from '../text/Never_Gonna';
 import GetFile from './showFile';
+import * as d3 from 'd3';
 import GithubLogo from '../assets/github-icon.svg';
 interface Char {
   char: string;
@@ -21,6 +22,7 @@ const StepsPanel: React.FC<CommonArgs> = ({
   setTree,
   setCompressed,
   setDisplayText,
+  setPreviousTransform,
 }) => {
   // should always be sorted in ascending order
   const [nodeArray, setNodeArray] = useState<Array<TreeNode>>([]);
@@ -106,12 +108,22 @@ const StepsPanel: React.FC<CommonArgs> = ({
       }
       setTree((prev) => {
         let treeNodes = [];
+        let isTempPushed = false;
         prev.forEach((tNode) => {
           if (tNode?.parent === undefined) {
             treeNodes.push(tNode);
+          } else if (
+            // preserves the order of the tree nodes when combining
+            // an inter node and a letter
+            tNode.parent?.count === temp.count &&
+            tNode.parent?.value === temp.value &&
+            !isTempPushed // covers when combining 2 inter nodes
+          ) {
+            isTempPushed = true;
+            treeNodes.push(temp);
           }
         });
-        treeNodes.push(temp);
+        if (!isTempPushed) treeNodes.push(temp);
         return treeNodes;
       });
     }
@@ -184,6 +196,7 @@ const StepsPanel: React.FC<CommonArgs> = ({
     setTree([]);
     setNodeArray([]);
     setCompBinValues([]);
+    setPreviousTransform(undefined);
     setCompressed(undefined);
   }
   const loadSimple = () => {

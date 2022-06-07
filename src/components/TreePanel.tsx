@@ -14,10 +14,13 @@ import { TreeNode, Node } from '../classes/Huffman';
 interface TreeProps {
   treeData: TreeNode | undefined;
   hsbData: HSBData;
+  previousTransform: d3.ZoomTransform | undefined;
+  setPreviousTransform: React.Dispatch<React.SetStateAction<any>>;
 }
 
 function Tree(props: TreeProps) {
   const margin = { top: 50, right: 0, bottom: 30, left: 100 };
+  let currentZoom = 1;
 
   const ref = useRef<SVGSVGElement>(null);
 
@@ -48,16 +51,22 @@ function Tree(props: TreeProps) {
     const g = svg.append('g');
 
     const zoom = d3.zoom<SVGSVGElement, unknown>().on('zoom', (e) => {
+      // console.log(e);
       g.attr('transform', e.transform);
+      props.setPreviousTransform(e.transform);
     });
 
     svg.call(zoom);
 
     // trigger tha initial zoom with an initial transform.
-    svg.call(
-      zoom.transform,
-      d3.zoomIdentity.scale(1).translate(margin.left, margin.top),
-    );
+    if (props.previousTransform === undefined) {
+      svg.call(
+        zoom.transform,
+        d3.zoomIdentity.scale(currentZoom).translate(margin.left, margin.top),
+      );
+    } else {
+      svg.call(zoom.transform, props.previousTransform);
+    }
 
     // adds the links between the nodes
     const link = g
@@ -149,7 +158,7 @@ function Tree(props: TreeProps) {
     .tree<TreeNode>()
     .nodeSize([40, 40])
     .separation((a, b) => {
-      return a.parent === b.parent ? 3 : 4;
+      return a.parent === b.parent ? 3 : 5;
     });
 
   //  assigns the data to a hierarchy using parent-child relationships
@@ -173,7 +182,13 @@ function Tree(props: TreeProps) {
   );
 }
 
-const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
+const TreePanel: React.FC<CommonArgs> = ({
+  tree,
+  displayText,
+  hsbData,
+  previousTransform,
+  setPreviousTransform,
+}) => {
   const [treeRoot, setTreeRoot] = useState<TreeNode | undefined>();
 
   useEffect(() => {
@@ -195,7 +210,14 @@ const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
     return <></>;
   }
 
-  return <Tree treeData={treeRoot} hsbData={hsbData} />;
+  return (
+    <Tree
+      treeData={treeRoot}
+      hsbData={hsbData}
+      previousTransform={previousTransform}
+      setPreviousTransform={setPreviousTransform}
+    />
+  );
 };
 
 export default TreePanel;
