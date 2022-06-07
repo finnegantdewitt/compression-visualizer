@@ -52,8 +52,8 @@ function App() {
       {isMobile && !userHasBeenWarned ? (
         <div style={{ marginTop: '1em', marginLeft: '1em' }}>
           <div style={{ marginBottom: '1em' }}>
-            Please use this on a wider screen <br />
-            (This site doesn't look very good on a phone)
+            Please visit the site on a wider screen <br />
+            (It doesn't look very good on a phone)
           </div>
           <div>
             <button
@@ -61,7 +61,7 @@ function App() {
                 setUserHasBeenWarned(true);
               }}
             >
-              I know better just show me the site
+              I know better just show me it anyway
             </button>
           </div>
         </div>
