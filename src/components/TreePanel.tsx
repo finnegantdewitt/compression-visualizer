@@ -18,27 +18,6 @@ interface TreeProps {
 
 function Tree(props: TreeProps) {
   const margin = { top: 50, right: 0, bottom: 30, left: 100 };
-  const [width, setHeight] = useState<number>(750 - margin.top - margin.bottom);
-  const [height, setWidth] = useState<number>(600 - margin.left - margin.right);
-
-  const [pageHeight, setPageHeight] = useState<number | undefined>(0);
-  const [pageWidth, setPageWidth] = useState<number | undefined>(0);
-  useLayoutEffect(() => {
-    setPageHeight(ref.current?.clientHeight);
-    setPageWidth(ref.current?.clientWidth);
-    if (
-      typeof pageHeight === 'number' &&
-      typeof pageWidth === 'number' &&
-      pageHeight > 0 &&
-      pageWidth > 0
-    ) {
-      setHeight(pageHeight - margin.top - margin.bottom);
-      setWidth(pageWidth - margin.left - margin.right);
-      margin.left = pageWidth / 2;
-      // console.log('Page Height: %d', pageHeight);
-      // console.log('Page Width: %d', pageWidth);
-    }
-  });
 
   const ref = useRef<SVGSVGElement>(null);
 
@@ -53,6 +32,18 @@ function Tree(props: TreeProps) {
 
     // clear out any existing elements
     svg.selectAll('*').remove();
+
+    // place the root in the top center
+    let cliHeight = ref.current?.clientHeight;
+    let cliWidth = ref.current?.clientWidth;
+    if (
+      typeof cliHeight === 'number' &&
+      typeof cliWidth === 'number' &&
+      cliHeight > 0 &&
+      cliWidth > 0
+    ) {
+      margin.left = cliWidth / 2;
+    }
 
     const g = svg
       .append('g')
@@ -93,7 +84,7 @@ function Tree(props: TreeProps) {
       )
       .attr('transform', (d) => 'translate(' + d.x + ',' + d.y + ')');
 
-    // adds the circle to the node
+    // adds the square to the node
     node
       .append('rect')
       .attr('x', -20)
@@ -140,7 +131,7 @@ function Tree(props: TreeProps) {
       .text((d) => {
         return d.data.count;
       });
-  }, [props.treeData, width, height, margin.left, margin.top]);
+  }, [props.treeData, margin.left, margin.top]);
 
   // ==== put all hook calls above this line ====
 
@@ -192,7 +183,7 @@ const TreePanel: React.FC<CommonArgs> = ({ tree, displayText, hsbData }) => {
       });
       setTreeRoot(invisibleRoot);
     } else {
-      if (tree !== undefined) setTreeRoot(tree[0]);
+      if (tree !== undefined && tree.length > 0) setTreeRoot(tree[0]);
     }
     // console.log(treeRoot);
   }, [tree, displayText]);
