@@ -19,7 +19,6 @@ interface BinaryRepresentation {
 const StepsPanel: React.FC<CommonArgs> = ({
   displayText,
   setTree,
-  tree,
   setCompressed,
   setDisplayText,
 }) => {
@@ -67,13 +66,6 @@ const StepsPanel: React.FC<CommonArgs> = ({
       setNodeArray((prevNodes) => [...prevNodes, node]);
     });
   };
-
-  // if nodeArray is down to 1, display compressed binary
-  //   useEffect(() => {
-  //     if (nodeArray.length === 1) {
-  //       setCompressed(genenrateCompressedData(displayText, nodeArray[0]));
-  //     }
-  //   }, [nodeArray]);
 
   const build = () => {
     const branchNode: Node = { char: null, bits: null };
@@ -176,7 +168,7 @@ const StepsPanel: React.FC<CommonArgs> = ({
         };
         binTableArray.push(b);
       }
-      console.log(binTableArray);
+      // console.log(binTableArray);
       setCompBinValues(binTableArray);
     }
   };

@@ -45,15 +45,20 @@ function Tree(props: TreeProps) {
       margin.left = cliWidth / 2;
     }
 
-    const g = svg
-      .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-      .classed('svg-content-responsive', true);
+    console.log(margin.left);
 
+    const g = svg.append('g');
+
+    const zoom = d3.zoom<SVGSVGElement, unknown>().on('zoom', (e) => {
+      g.attr('transform', e.transform);
+    });
+
+    svg.call(zoom);
+
+    // trigger tha initial zoom with an initial transform.
     svg.call(
-      d3.zoom<SVGSVGElement, unknown>().on('zoom', (e) => {
-        g.attr('transform', e.transform);
-      }),
+      zoom.transform,
+      d3.zoomIdentity.scale(1).translate(margin.left, margin.top),
     );
 
     // adds the links between the nodes
