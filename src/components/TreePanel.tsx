@@ -45,8 +45,6 @@ function Tree(props: TreeProps) {
       margin.left = cliWidth / 2;
     }
 
-    console.log(margin.left);
-
     const g = svg.append('g');
 
     const zoom = d3.zoom<SVGSVGElement, unknown>().on('zoom', (e) => {

@@ -114,7 +114,7 @@ export function createTree(text: string) {
 export function useHuffmanTree(text: string): TreeNode {
   // const [tree, setTree] = useState<TreeNode>(() => createTree(text));
   const [tree, setTree] = useState<TreeNode>(() => {
-    console.log('useHuffmanTree useState func');
+    // console.log('useHuffmanTree useState func');
     return createTree(text);
   });
 
