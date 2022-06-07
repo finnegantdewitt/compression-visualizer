@@ -6,12 +6,7 @@ import Simple from './text/Simple_Test_Text';
 import * as d3 from 'd3';
 import { CommonArgs } from './components/common';
 import { useHsbData } from './components/HoverStyleBodge';
-import {
-  CompressedHuffmanData,
-  TreeNode,
-  useHuffmanTree,
-  useHuffmanCompressedData,
-} from './classes/Huffman';
+import { CompressedHuffmanData, TreeNode } from './classes/Huffman';
 
 function App() {
   const hsbData = useHsbData();
@@ -23,6 +18,22 @@ function App() {
   const [previousTransform, setPreviousTransform] = useState<
     d3.ZoomTransform | undefined
   >(undefined);
+
+  const [width, setWidth] = useState<number>(window.innerWidth);
+  const [userHasBeenWarned, setUserHasBeenWarned] = useState(false);
+
+  function handleWindowSizeChange() {
+    setWidth(window.innerWidth);
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', handleWindowSizeChange);
+    return () => {
+      window.removeEventListener('resize', handleWindowSizeChange);
+    };
+  }, []);
+
+  const isMobile = width <= 1000;
 
   const commonArgs: CommonArgs = {
     displayText,
@@ -38,7 +49,25 @@ function App() {
 
   return (
     <div className="App">
-      <LyricSplit {...commonArgs} />
+      {isMobile && !userHasBeenWarned ? (
+        <div style={{ marginTop: '1em', marginLeft: '1em' }}>
+          <div style={{ marginBottom: '1em' }}>
+            Please use this on a wider screen <br />
+            (This site doesn't look very good on a phone)
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                setUserHasBeenWarned(true);
+              }}
+            >
+              I know better just show me the site
+            </button>
+          </div>
+        </div>
+      ) : (
+        <LyricSplit {...commonArgs} />
+      )}
     </div>
   );
 }
