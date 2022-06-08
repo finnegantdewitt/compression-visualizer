@@ -158,7 +158,7 @@ function Tree(props: TreeProps) {
     .tree<TreeNode>()
     .nodeSize([40, 40])
     .separation((a, b) => {
-      return a.parent === b.parent ? 3 : 5;
+      return a.parent === b.parent ? 3 : 4;
     });
 
   //  assigns the data to a hierarchy using parent-child relationships
