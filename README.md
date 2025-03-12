@@ -2,7 +2,7 @@
 
 Finally an app that can visualize the Huffman Coding algorithm!
 
-Checkout the live sites at https://people.ucsc.edu/~fdewitt/huff/ or https://finnegandewitt.com/huff/
+Checkout the live sites at https://people.ucsc.edu/~fdewitt/huff/ or https://finnegandewitt.com/huffman/
 
 ## Available Scripts
 
